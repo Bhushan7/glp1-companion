@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server'
 import NavBar from '@/components/NavBar'
 import StatCard from '@/components/StatCard'
 import InsightCard from '@/components/InsightCard'
-import SubscribeButton from './SubscribeButton'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -91,11 +90,10 @@ export default async function DashboardPage() {
         </div>
 
         {!subscribed && (
-          <div className="mb-6 rounded-xl bg-[#1D9E75]/10 border border-[#1D9E75]/20 p-4 flex items-center justify-between">
+          <div className="mb-6 rounded-xl bg-[#1D9E75]/10 border border-[#1D9E75]/20 p-4">
             <p className="text-sm font-medium text-[#1D9E75]">
-              Subscribe to unlock weekly AI insights delivered every Friday.
+              Payments coming soon. You are on the early access list.
             </p>
-            <SubscribeButton />
           </div>
         )}
 
