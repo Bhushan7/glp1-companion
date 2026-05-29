@@ -47,3 +47,46 @@ npm run dev
 ---
 
 ## Environment variables
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_ANON_KEY
+SUPABASE_SERVICE_ROLE_KEY
+ANTHROPIC_API_KEY
+LOOPS_API_KEY
+LOOPS_WEEKLY_TEMPLATE_ID
+NEXT_PUBLIC_APP_URL
+CRON_SECRET
+
+---
+
+## Project structure
+app/
+├── page.tsx              ← landing page
+├── dashboard/            ← main user dashboard
+├── log/                  ← daily health log entry
+├── report/               ← weekly insights history
+├── onboarding/           ← first-login setup
+└── api/
+├── log/              ← save daily entry
+├── onboarding/       ← upsert user profile
+├── waitlist/         ← waitlist signups
+└── send-weekly-insights/ ← Vercel cron (Fridays 8am UTC)
+
+---
+
+## Guardrails
+
+- Not a medical device — positioned as a personal wellness journal
+- No HIPAA obligations at MVP — users log their own lifestyle data
+- Claude system prompt explicitly forbids medical advice
+- PDF reports framed as personal reference, not clinical documentation
+
+---
+
+## Roadmap
+
+- [ ] Lemon Squeezy payments ($9.99/month Pro)
+- [ ] Doctor visit PDF generation
+- [ ] Cohort community (group by start week)
+- [ ] Medication cost and discount tracker
+- [ ] Post-GLP-1 maintenance mode
+- [ ] Medicare coverage wave (July 2026)
