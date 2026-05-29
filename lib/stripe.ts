@@ -1,2 +1,1 @@
-// TODO: Replace with Lemon Squeezy integration
-export {}
+export const stripe = null
