@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import NavBar from '@/components/NavBar'
 import StatCard from '@/components/StatCard'
 import InsightCard from '@/components/InsightCard'
+import GenerateInsightButton from '@/components/GenerateInsightButton'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -139,19 +140,22 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="mt-8 flex gap-4">
-          <Link
-            href="/log"
-            className="rounded-lg bg-[#1D9E75] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[#178a64] transition-colors"
-          >
-            Log Today
-          </Link>
-          <Link
-            href="/report"
-            className="rounded-lg border border-gray-200 bg-white text-gray-700 px-6 py-2.5 text-sm font-semibold hover:border-[#1D9E75] transition-colors"
-          >
-            All Reports
-          </Link>
+        <div className="mt-8 space-y-4">
+          <div className="flex gap-4">
+            <Link
+              href="/log"
+              className="rounded-lg bg-[#1D9E75] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[#178a64] transition-colors"
+            >
+              Log Today
+            </Link>
+            <Link
+              href="/report"
+              className="rounded-lg border border-gray-200 bg-white text-gray-700 px-6 py-2.5 text-sm font-semibold hover:border-[#1D9E75] transition-colors"
+            >
+              All Reports
+            </Link>
+          </div>
+          <GenerateInsightButton />
         </div>
       </main>
     </div>
