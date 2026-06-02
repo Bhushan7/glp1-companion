@@ -33,7 +33,6 @@ export default async function DashboardPage() {
 
   if (!user) redirect('/login')
 
-  // Check profile completeness
   const { data: profile } = await supabase
     .from('users_profile')
     .select('*')
@@ -74,45 +73,38 @@ export default async function DashboardPage() {
       ? +(latestWeight - oldestWeight).toFixed(1)
       : null
 
-  const currentDose = profile.current_dose
-
-  const subscribed = profile.subscription_status === 'active'
+  const firstName = profile.name?.split(' ')[0]
 
   return (
     <div className="min-h-screen bg-gray-50">
       <NavBar />
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            Welcome back, {profile.name?.split(' ')[0]}
+      <main className="max-w-4xl mx-auto px-4 py-6 md:py-8">
+
+        {/* Header */}
+        <div className="mb-5 md:mb-6">
+          <h1 className="text-xl md:text-2xl font-bold text-gray-900">
+            Welcome back, {firstName} 👋
           </h1>
-          <p className="text-sm text-gray-500 mt-1">Here&apos;s your progress this week.</p>
+          <p className="text-sm text-gray-500 mt-0.5">Here&apos;s your progress this week.</p>
         </div>
 
-        {!subscribed && (
-          <div className="mb-6 rounded-xl bg-[#1D9E75]/10 border border-[#1D9E75]/20 p-4">
-            <p className="text-sm font-medium text-[#1D9E75]">
-              Payments coming soon. You are on the early access list.
-            </p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Log streak" value={`${streak} day${streak !== 1 ? 's' : ''}`} />
+        {/* Stats — 2 cols on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
+          <StatCard label="Streak" value={`${streak}d`} />
           <StatCard
-            label="Current weight"
+            label="Weight"
             value={latestWeight != null ? `${latestWeight} kg` : '—'}
             trend={
               weightDelta != null
-                ? `${weightDelta > 0 ? '+' : ''}${weightDelta} kg this week`
+                ? `${weightDelta > 0 ? '+' : ''}${weightDelta} kg`
                 : undefined
             }
             trendPositive={weightDelta != null && weightDelta <= 0}
           />
           <StatCard
-            label="Current dose"
-            value={currentDose != null ? `${currentDose} mg` : '—'}
+            label="Dose"
+            value={profile.current_dose != null ? `${profile.current_dose} mg` : '—'}
           />
           <StatCard
             label="Medication"
@@ -120,8 +112,30 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900">Recent Insights</h2>
+        {/* Quick actions — sticky on mobile */}
+        <div className="flex gap-3 mb-6 md:mb-8">
+          <Link
+            href="/log"
+            className="flex-1 md:flex-none rounded-xl bg-[#1D9E75] text-white px-5 py-3 text-sm font-semibold hover:bg-[#178a64] transition-colors text-center"
+          >
+            + Log Today
+          </Link>
+          <Link
+            href="/report"
+            className="flex-1 md:flex-none rounded-xl border border-gray-200 bg-white text-gray-700 px-5 py-3 text-sm font-semibold hover:border-[#1D9E75] transition-colors text-center"
+          >
+            All Reports
+          </Link>
+        </div>
+
+        {/* Generate Insight */}
+        <div className="mb-6 md:mb-8">
+          <GenerateInsightButton />
+        </div>
+
+        {/* Recent Insights */}
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-base md:text-lg font-semibold text-gray-900">Recent Insights</h2>
           <Link href="/report" className="text-sm text-[#1D9E75] font-medium hover:underline">
             View all →
           </Link>
@@ -129,35 +143,43 @@ export default async function DashboardPage() {
 
         {weeklyInsights.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm p-8 text-center text-gray-400 text-sm">
-            Your first insight will appear after you&apos;ve logged at least 2 days and your
-            Friday report runs.
+            Generate your first insight above after logging at least 2 days.
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {weeklyInsights.map((insight) => (
               <InsightCard key={insight.id} insight={insight} />
             ))}
           </div>
         )}
-
-        <div className="mt-8 space-y-4">
-          <div className="flex gap-4">
-            <Link
-              href="/log"
-              className="rounded-lg bg-[#1D9E75] text-white px-6 py-2.5 text-sm font-semibold hover:bg-[#178a64] transition-colors"
-            >
-              Log Today
-            </Link>
-            <Link
-              href="/report"
-              className="rounded-lg border border-gray-200 bg-white text-gray-700 px-6 py-2.5 text-sm font-semibold hover:border-[#1D9E75] transition-colors"
-            >
-              All Reports
-            </Link>
-          </div>
-          <GenerateInsightButton />
-        </div>
       </main>
+
+      {/* Mobile bottom nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-2 pb-safe">
+        <div className="flex items-center justify-around h-16">
+          <Link href="/dashboard" className="flex flex-col items-center gap-0.5 px-4 py-2 text-[#1D9E75]">
+            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+            </svg>
+            <span className="text-[10px] font-medium">Home</span>
+          </Link>
+          <Link href="/log" className="flex flex-col items-center gap-0.5 px-4 py-2 text-gray-400">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span className="text-[10px] font-medium">Log</span>
+          </Link>
+          <Link href="/report" className="flex flex-col items-center gap-0.5 px-4 py-2 text-gray-400">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
+            </svg>
+            <span className="text-[10px] font-medium">Reports</span>
+          </Link>
+        </div>
+      </nav>
+
+      {/* Spacer so content isn't hidden behind bottom nav on mobile */}
+      <div className="h-20 md:hidden" />
     </div>
   )
 }
