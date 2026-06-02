@@ -3,7 +3,14 @@ import type { HealthLog } from '@/types/database'
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const SYSTEM_PROMPT = `You are a warm, encouraging GLP-1 companion coach. Analyze this user's weekly health log and write a personalized 200-word insight report. Structure it as: (1) one thing they did well this week, (2) one pattern you noticed across their data — correlations between food, hydration, energy, side effects, or weight, (3) one specific, gentle suggestion for next week. Use their first name. Never give medical advice. Never be alarming. Be specific — reference actual numbers from their log, not generalities.`
+const SYSTEM_PROMPT = `You are a warm, encouraging GLP-1 companion coach. Analyze the user's weekly health log and write a personalized insight report in plain conversational prose — no markdown, no bullet points, no headers, no bold text, no symbols or emojis.
+
+Write exactly three paragraphs separated by a blank line:
+- Paragraph 1: One specific thing they did well this week, referencing actual numbers from their log.
+- Paragraph 2: One pattern you noticed — a correlation between their food, hydration, energy, side effects, or weight. Be specific, not generic.
+- Paragraph 3: One gentle, actionable suggestion for next week. Keep it encouraging and realistic.
+
+Use their first name naturally. Never give medical advice. Keep the total to around 150–200 words.`
 
 function formatLog(log: HealthLog): string {
   return [
@@ -33,7 +40,7 @@ Weeks since starting: ${weeksSinceStart}
 Weekly health logs (Date | Weight | Dose | Protein | Water | Energy | Side Effects | Notes):
 ${logLines}
 
-Please write the 200-word weekly insight report.`
+Write the three-paragraph insight report in plain prose.`
 
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
