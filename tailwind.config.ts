@@ -11,6 +11,7 @@ const config: Config = {
       colors: {
         primary: '#1D9E75',
       },
+      padding: { safe: 'env(safe-area-inset-bottom)' },
     },
   },
   plugins: [],
