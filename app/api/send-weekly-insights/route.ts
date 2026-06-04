@@ -38,19 +38,8 @@ export async function GET(request: Request) {
 
     if (!logs || logs.length < 2) continue
 
-    const weeksSinceStart = user.start_date
-      ? Math.floor(
-          (Date.now() - new Date(user.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000)
-        )
-      : 0
-
     try {
-      const insightText = await generateWeeklyInsight(
-        user.name ?? 'there',
-        user.medication ?? 'GLP-1',
-        weeksSinceStart,
-        logs as HealthLog[]
-      )
+      const insightText = await generateWeeklyInsight(logs as HealthLog[], user)
 
       const { data: insight } = await admin
         .from('weekly_insights')
@@ -67,7 +56,9 @@ export async function GET(request: Request) {
         await sendWeeklyEmail(
           user.email,
           user.name ?? 'there',
-          weeksSinceStart,
+          user.start_date
+            ? Math.floor((Date.now() - new Date(user.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000))
+            : 0,
           insightText,
           insight?.pdf_url ?? undefined
         )
