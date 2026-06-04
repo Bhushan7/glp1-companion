@@ -42,16 +42,7 @@ export async function POST() {
     )
   }
 
-  const weeksSinceStart = profile.start_date
-    ? Math.floor((Date.now() - new Date(profile.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000))
-    : 0
-
-  const insightText = await generateWeeklyInsight(
-    profile.name ?? 'there',
-    profile.medication ?? 'GLP-1',
-    weeksSinceStart,
-    logs as HealthLog[]
-  )
+  const insightText = await generateWeeklyInsight(logs as HealthLog[], profile)
 
   const weekEnding = new Date().toISOString().split('T')[0]
 

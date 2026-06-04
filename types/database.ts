@@ -18,6 +18,8 @@ export interface HealthLog {
   weight_kg: number | null
   dose_mg: number | null
   side_effects: string | null
+  food_tags: string[]
+  injection_time: string | null
   protein_grams: number | null
   water_oz: number | null
   energy_level: number | null
