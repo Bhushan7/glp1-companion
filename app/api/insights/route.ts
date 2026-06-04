@@ -63,7 +63,24 @@ export async function POST() {
     }
   }
 
-  const insightText = await generateWeeklyInsight(logs as HealthLog[], profile)
+  // Fetch all prior insights for the journey summary
+  const { data: priorRows } = await admin
+    .from('weekly_insights')
+    .select('insight_text')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true })
+
+  const priorInsights = (priorRows ?? [])
+    .map((r) => r.insight_text)
+    .filter((t): t is string => !!t)
+
+  const { weeklyInsight, journeyInsight } = await generateWeeklyInsight(
+    logs as HealthLog[],
+    profile,
+    priorInsights
+  )
+
+  const insightText = `${weeklyInsight}\n\n---OVERALL JOURNEY---\n\n${journeyInsight}`
 
   const weekEnding = new Date().toISOString().split('T')[0]
 
