@@ -1,57 +1,72 @@
-import Anthropic from '@anthropic-ai/sdk'
-import type { HealthLog } from '@/types/database'
+// lib/claude.ts
+import Anthropic from "@anthropic-ai/sdk";
 
-const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-const SYSTEM_PROMPT = `You are a warm, encouraging GLP-1 companion coach. Analyze the user's weekly health log and write a personalized insight report in plain conversational prose — no markdown, no bullet points, no headers, no bold text, no symbols or emojis.
-
-Write exactly three paragraphs separated by a blank line:
-- Paragraph 1: One specific thing they did well this week, referencing actual numbers from their log.
-- Paragraph 2: One pattern you noticed — a correlation between their food, hydration, energy, side effects, or weight. Be specific, not generic.
-- Paragraph 3: One gentle, actionable suggestion for next week. Keep it encouraging and realistic.
-
-Use their first name naturally. Never give medical advice. Keep the total to around 150–200 words.`
-
-function formatLog(log: HealthLog): string {
-  return [
-    log.log_date,
-    log.weight_kg != null ? `${log.weight_kg}kg` : '-',
-    log.dose_mg != null ? `${log.dose_mg}mg` : '-',
-    log.protein_grams != null ? `${log.protein_grams}g protein` : '-',
-    log.water_oz != null ? `${log.water_oz}oz water` : '-',
-    log.energy_level != null ? `energy ${log.energy_level}/5` : '-',
-    log.side_effects || 'no side effects',
-    log.notes || '',
-  ].join(' | ')
-}
+const client = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY,
+});
 
 export async function generateWeeklyInsight(
-  userName: string,
-  medication: string,
-  weeksSinceStart: number,
-  logs: HealthLog[]
+  logs: any[],
+  profile: any
 ): Promise<string> {
-  const logLines = logs.map(formatLog).join('\n')
+  const logSummary = logs
+    .map((log) => {
+      const foodTagStr =
+        log.food_tags?.length > 0 ? log.food_tags.join(", ") : "not logged";
+      const injTimeStr = log.injection_time ?? "not logged";
+      return `Date: ${log.log_date} | Weight: ${log.weight_kg ?? "—"}kg | Protein: ${log.protein_g ?? "—"}g | Water: ${log.water_ml ?? "—"}ml | Energy: ${log.energy_level ?? "—"}/10 | Side effects: ${log.side_effects?.join(", ") || "none"} | Food types: ${foodTagStr} | Injection time: ${injTimeStr}`;
+    })
+    .join("\n");
 
-  const userPrompt = `User: ${userName}
-Medication: ${medication}
-Weeks since starting: ${weeksSinceStart}
+  const weightKg = profile.current_weight_kg ?? profile.starting_weight_kg ?? 80;
+  const proteinTarget = Math.round(weightKg * 1.2);
 
-Weekly health logs (Date | Weight | Dose | Protein | Water | Energy | Side Effects | Notes):
-${logLines}
+  // Calculate average protein this week
+  const proteinLogs = logs.filter((l) => l.protein_g != null);
+  const avgProtein =
+    proteinLogs.length > 0
+      ? Math.round(
+          proteinLogs.reduce((sum, l) => sum + l.protein_g, 0) /
+            proteinLogs.length
+        )
+      : null;
 
-Write the three-paragraph insight report in plain prose.`
+  const proteinDeficit =
+    avgProtein != null && avgProtein < proteinTarget * 0.5;
 
-  const message = await anthropic.messages.create({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 1024,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userPrompt }],
-  })
+  const prompt = `You are a compassionate GLP-1 companion coach. The user is on ${profile.medication ?? "a GLP-1 medication"} at ${profile.current_dose ?? "their current"} dose. They have been on treatment since ${profile.start_date ?? "recently"}.
 
-  const block = message.content[0]
-  if (block.type !== 'text') {
-    throw new Error('Unexpected response type from Claude API')
+Here are their health logs for the past week:
+${logSummary}
+
+Their body weight is approximately ${weightKg}kg. Their daily protein target is ${proteinTarget}g (1.2g per kg of body weight). Their average protein intake this week was ${avgProtein != null ? `${avgProtein}g` : "not logged"}.
+${proteinDeficit ? `\nCRITICAL: This user is averaging less than 50% of their protein target. They are at significant risk of losing muscle mass, not just fat. This must be prominently addressed.` : ""}
+
+Write a personalised weekly insight in plain prose — no bullet points, no markdown, no bold text, no headers. Write exactly 4 paragraphs:
+
+Paragraph 1 — Overall progress: Acknowledge what they logged this week. Be warm and specific. Reference actual numbers.
+
+Paragraph 2 — Side effect & GI patterns: Look for correlations between their side effects, food types (high-fat, fried, alcohol, raw veg), and injection timing. If you see a pattern (e.g. nausea consistently follows high-fat meals, or peaks 2 days post-injection), name it clearly and give one concrete, actionable adjustment. If injection time is logged and side effects are present, suggest timing changes. If no clear pattern yet, explain what to watch for and encourage them to keep logging food types.
+
+Paragraph 3 — Muscle loss & protein: ${proteinDeficit ? `This is urgent. They are averaging ${avgProtein}g against a target of ${proteinTarget}g — less than half what they need. Explain clearly that on GLP-1s, up to 50% of weight lost can be lean muscle mass when protein is this low. Name 3 specific high-protein, low-volume foods they can add today: Greek yogurt (17g per cup), cottage cheese (25g per cup), or a protein shake (25–30g). Be direct about the health risk without being alarmist.` : `Acknowledge their protein intake relative to their ${proteinTarget}g target. If they are hitting it, praise the habit specifically. If they are somewhat under, suggest one easy addition. Briefly remind them that GLP-1s suppress appetite so much that muscle loss is a silent risk — keeping protein up is the most important thing they can do alongside the medication.`}
+
+Paragraph 4 — One thing for next week: Give exactly one specific, achievable action for the coming week. It should be the highest-leverage change based on their actual data this week — not generic advice.`;
+
+  const message = await client.messages.create({
+    model: "claude-opus-4-5",
+    max_tokens: 800,
+    messages: [
+      {
+        role: "user",
+        content: prompt,
+      },
+    ],
+  });
+
+  const content = message.content[0];
+  if (content.type !== "text") {
+    throw new Error("Unexpected response type from Claude");
   }
-  return block.text
+
+  return content.text;
 }
