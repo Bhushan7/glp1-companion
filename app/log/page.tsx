@@ -1,5 +1,7 @@
 'use client'
 
+export const dynamic = 'force-dynamic'
+
 import NavBar from '@/components/NavBar'
 import LogForm from '@/components/LogForm'
 
