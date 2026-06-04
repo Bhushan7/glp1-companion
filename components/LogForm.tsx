@@ -17,7 +17,9 @@ export default function LogForm() {
     log_date: today,
     weight_kg: '',
     dose_mg: '',
+    injection_time: null as string | null,
     side_effects: [] as string[],
+    food_tags: [] as string[],
     protein_grams: '',
     water_oz: '',
     energy_level: null as number | null,
@@ -48,6 +50,8 @@ export default function LogForm() {
       weight_kg: form.weight_kg ? parseFloat(form.weight_kg) : null,
       dose_mg: form.dose_mg ? parseFloat(form.dose_mg) : null,
       side_effects: form.side_effects.length > 0 ? form.side_effects.join(', ') : null,
+      food_tags: form.food_tags.length > 0 ? form.food_tags : null,
+      injection_time: form.injection_time || null,
       protein_grams: form.protein_grams ? parseInt(form.protein_grams) : null,
       water_oz: form.water_oz ? parseInt(form.water_oz) : null,
       energy_level: form.energy_level,
@@ -137,6 +141,22 @@ export default function LogForm() {
             </div>
           </div>
 
+          {/* Injection Time */}
+          <div>
+            <label className={labelClass}>
+              Injection time today{' '}
+              <span className="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <input
+              type="time"
+              value={form.injection_time ?? ''}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, injection_time: e.target.value || null }))
+              }
+              className={inputClass}
+            />
+          </div>
+
           {/* Protein + Water — side by side */}
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -188,6 +208,37 @@ export default function LogForm() {
                   }`}
                 >
                   {effect}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Food Type Tags */}
+          <div>
+            <label className={labelClass}>
+              Food types today{' '}
+              <span className="text-gray-400 font-normal">(tap all that apply)</span>
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {['high-fat', 'fried', 'alcohol', 'raw veg', 'high-protein', 'processed'].map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() =>
+                    setForm((prev) => ({
+                      ...prev,
+                      food_tags: prev.food_tags.includes(tag)
+                        ? prev.food_tags.filter((t) => t !== tag)
+                        : [...prev.food_tags, tag],
+                    }))
+                  }
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                    form.food_tags.includes(tag)
+                      ? 'bg-[#1D9E75] border-[#1D9E75] text-white'
+                      : 'bg-white border-gray-200 text-gray-600 hover:border-[#1D9E75]'
+                  }`}
+                >
+                  {tag}
                 </button>
               ))}
             </div>

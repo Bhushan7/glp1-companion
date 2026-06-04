@@ -5,6 +5,7 @@ import NavBar from '@/components/NavBar'
 import StatCard from '@/components/StatCard'
 import InsightCard from '@/components/InsightCard'
 import GenerateInsightButton from '@/components/GenerateInsightButton'
+import ProteinAlertCard from '@/components/ProteinAlertCard'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -73,6 +74,19 @@ export default async function DashboardPage() {
       ? +(latestWeight - oldestWeight).toFixed(1)
       : null
 
+  const recentLogs = healthLogs
+
+  const proteinLogs = recentLogs.filter((l) => l.protein_grams != null)
+  const avgProtein =
+    proteinLogs.length > 0
+      ? Math.round(
+          proteinLogs.reduce((sum, l) => sum + (l.protein_grams as number), 0) /
+            proteinLogs.length
+        )
+      : null
+
+  const weightKg = profile?.current_weight_kg ?? profile?.starting_weight_kg ?? 80
+
   const firstName = profile.name?.split(' ')[0]
 
   return (
@@ -126,6 +140,15 @@ export default async function DashboardPage() {
           >
             All Reports
           </Link>
+        </div>
+
+        {/* Protein Alert */}
+        <div className="mb-4">
+          <ProteinAlertCard
+            weightKg={weightKg}
+            avgProteinG={avgProtein}
+            daysLogged={recentLogs.length}
+          />
         </div>
 
         {/* Generate Insight */}
