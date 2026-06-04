@@ -8,11 +8,10 @@ import { createClient } from '@/lib/supabase/client'
 export default function NavBar() {
   const router = useRouter()
   const pathname = usePathname()
-  const supabase = createClient()
   const [menuOpen, setMenuOpen] = useState(false)
 
   async function handleSignOut() {
-    await supabase.auth.signOut()
+    await createClient().auth.signOut()
     router.push('/login')
     router.refresh()
   }
