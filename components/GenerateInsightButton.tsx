@@ -4,10 +4,33 @@ import { useState } from 'react'
 import InsightCard from './InsightCard'
 import type { WeeklyInsight } from '@/types/database'
 
-export default function GenerateInsightButton() {
+function addSevenDays(from: Date): string {
+  return new Date(from.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
+}
+
+function formatDate(isoString: string): string {
+  return new Date(isoString).toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  })
+}
+
+export default function GenerateInsightButton({
+  lastInsightDate,
+  nextAvailableDate: nextAvailableProp,
+}: {
+  lastInsightDate: string | null
+  nextAvailableDate: string | null
+}) {
   const [loading, setLoading] = useState(false)
   const [insight, setInsight] = useState<WeeklyInsight | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [nextAvailableDate, setNextAvailableDate] = useState<string | null>(
+    nextAvailableProp ?? (lastInsightDate ? addSevenDays(new Date(lastInsightDate)) : null)
+  )
+
+  const isAllowed = !nextAvailableDate || new Date(nextAvailableDate) <= new Date()
 
   async function handleGenerate() {
     setLoading(true)
@@ -20,6 +43,9 @@ export default function GenerateInsightButton() {
 
     if (res.ok) {
       setInsight(data.insight)
+      setNextAvailableDate(addSevenDays(new Date()))
+    } else if (res.status === 429) {
+      setNextAvailableDate(data.next_available)
     } else {
       setError(data.error ?? 'Something went wrong. Try again.')
     }
@@ -56,9 +82,13 @@ export default function GenerateInsightButton() {
       </div>
 
       <button
-        onClick={handleGenerate}
-        disabled={loading}
-        className="mt-4 w-full rounded-xl bg-[#1D9E75] text-white py-3 text-sm font-bold hover:bg-[#178a64] transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+        onClick={isAllowed ? handleGenerate : undefined}
+        disabled={loading || !isAllowed}
+        className={`mt-4 w-full rounded-xl py-3 text-sm font-bold transition-colors flex items-center justify-center gap-2 ${
+          isAllowed
+            ? 'bg-[#1D9E75] text-white hover:bg-[#178a64] disabled:opacity-60'
+            : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+        }`}
       >
         {loading ? (
           <>
@@ -72,6 +102,11 @@ export default function GenerateInsightButton() {
           'Generate My Weekly Insight'
         )}
       </button>
+      {!isAllowed && nextAvailableDate && (
+        <p className="mt-2 text-xs text-center text-gray-400">
+          Next insight available on {formatDate(nextAvailableDate)}
+        </p>
+      )}
     </div>
   )
 }

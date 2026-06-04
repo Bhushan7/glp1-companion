@@ -42,6 +42,27 @@ export async function POST() {
     )
   }
 
+  // Rate-limit: once every 7 days
+  const { data: lastInsight } = await admin
+    .from('weekly_insights')
+    .select('created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (lastInsight) {
+    const nextAvailable = new Date(
+      new Date(lastInsight.created_at).getTime() + 7 * 24 * 60 * 60 * 1000
+    )
+    if (nextAvailable > new Date()) {
+      return NextResponse.json(
+        { error: 'too_soon', next_available: nextAvailable.toISOString() },
+        { status: 429 }
+      )
+    }
+  }
+
   const insightText = await generateWeeklyInsight(logs as HealthLog[], profile)
 
   const weekEnding = new Date().toISOString().split('T')[0]
