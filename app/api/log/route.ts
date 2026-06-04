@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       dose_mg: dose_mg ?? null,
       injection_time: injection_time ?? null,
       side_effects: side_effects ?? null,
-      food_tags: food_tags ?? null,
+      food_tags: food_tags ?? [],
       protein_grams: protein_grams ?? null,
       water_oz: water_oz ?? null,
       energy_level: energy_level ?? null,
