@@ -1,32 +1,38 @@
-// lib/claude.ts
 import Anthropic from "@anthropic-ai/sdk";
+import type { HealthLog } from "@/types/database";
 
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
 });
 
 export async function generateWeeklyInsight(
-  logs: any[],
-  profile: any
+  logs: HealthLog[],
+  profile: {
+    name?: string | null;
+    medication?: string | null;
+    current_dose?: number | null;
+    start_date?: string | null;
+    current_weight_kg?: number | null;
+    starting_weight_kg?: number | null;
+  }
 ): Promise<string> {
   const logSummary = logs
     .map((log) => {
       const foodTagStr =
         log.food_tags?.length > 0 ? log.food_tags.join(", ") : "not logged";
       const injTimeStr = log.injection_time ?? "not logged";
-      return `Date: ${log.log_date} | Weight: ${log.weight_kg ?? "—"}kg | Protein: ${log.protein_g ?? "—"}g | Water: ${log.water_ml ?? "—"}ml | Energy: ${log.energy_level ?? "—"}/10 | Side effects: ${log.side_effects?.join(", ") || "none"} | Food types: ${foodTagStr} | Injection time: ${injTimeStr}`;
+      return `Date: ${log.log_date} | Weight: ${log.weight_kg ?? "—"}kg | Protein: ${log.protein_grams ?? "—"}g | Water: ${log.water_oz ?? "—"}oz | Energy: ${log.energy_level ?? "—"}/5 | Side effects: ${log.side_effects || "none"} | Food types: ${foodTagStr} | Injection time: ${injTimeStr}`;
     })
     .join("\n");
 
   const weightKg = profile.current_weight_kg ?? profile.starting_weight_kg ?? 80;
   const proteinTarget = Math.round(weightKg * 1.2);
 
-  // Calculate average protein this week
-  const proteinLogs = logs.filter((l) => l.protein_g != null);
+  const proteinLogs = logs.filter((l) => l.protein_grams != null);
   const avgProtein =
     proteinLogs.length > 0
       ? Math.round(
-          proteinLogs.reduce((sum, l) => sum + l.protein_g, 0) /
+          proteinLogs.reduce((sum, l) => sum + (l.protein_grams as number), 0) /
             proteinLogs.length
         )
       : null;
