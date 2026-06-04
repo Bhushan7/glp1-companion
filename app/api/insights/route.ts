@@ -42,7 +42,45 @@ export async function POST() {
     )
   }
 
-  const insightText = await generateWeeklyInsight(logs as HealthLog[], profile)
+  // Rate-limit: once every 7 days
+  const { data: lastInsight } = await admin
+    .from('weekly_insights')
+    .select('created_at')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single()
+
+  if (lastInsight) {
+    const nextAvailable = new Date(
+      new Date(lastInsight.created_at).getTime() + 7 * 24 * 60 * 60 * 1000
+    )
+    if (nextAvailable > new Date()) {
+      return NextResponse.json(
+        { error: 'too_soon', next_available: nextAvailable.toISOString() },
+        { status: 429 }
+      )
+    }
+  }
+
+  // Fetch all prior insights for the journey summary
+  const { data: priorRows } = await admin
+    .from('weekly_insights')
+    .select('insight_text')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: true })
+
+  const priorInsights = (priorRows ?? [])
+    .map((r) => r.insight_text)
+    .filter((t): t is string => !!t)
+
+  const { weeklyInsight, journeyInsight } = await generateWeeklyInsight(
+    logs as HealthLog[],
+    profile,
+    priorInsights
+  )
+
+  const insightText = `${weeklyInsight}\n\n---OVERALL JOURNEY---\n\n${journeyInsight}`
 
   const weekEnding = new Date().toISOString().split('T')[0]
 

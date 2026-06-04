@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import type { WeeklyInsight } from '@/types/database'
 
+const JOURNEY_SEPARATOR = '---OVERALL JOURNEY---'
+
 interface InsightCardProps {
   insight: WeeklyInsight
 }
@@ -16,12 +18,21 @@ export default function InsightCard({ insight }: InsightCardProps) {
     year: 'numeric',
   })
 
-  const text = insight.insight_text ?? 'No insight text available.'
-  const isLong = text.length > 200
-  const preview = isLong ? text.slice(0, 200).trimEnd() + '…' : text
+  const fullText = insight.insight_text ?? 'No insight text available.'
 
-  // Split into paragraphs for proper display
-  const paragraphs = text.split(/\n\n+/).filter(Boolean)
+  const separatorIndex = fullText.indexOf(JOURNEY_SEPARATOR)
+  const hasJourney = separatorIndex !== -1
+
+  const weeklyText = hasJourney ? fullText.slice(0, separatorIndex).trim() : fullText
+  const journeyText = hasJourney
+    ? fullText.slice(separatorIndex + JOURNEY_SEPARATOR.length).trim()
+    : null
+
+  const weeklyParagraphs = weeklyText.split(/\n\n+/).filter(Boolean)
+  const isLong = weeklyText.length > 200
+  const preview = isLong ? weeklyText.slice(0, 200).trimEnd() + '…' : weeklyText
+
+  const showToggle = isLong || hasJourney
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-5 md:p-6">
@@ -31,7 +42,7 @@ export default function InsightCard({ insight }: InsightCardProps) {
 
       {expanded ? (
         <div className="space-y-3">
-          {paragraphs.map((para, i) => (
+          {weeklyParagraphs.map((para, i) => (
             <p key={i} className="text-gray-700 text-sm leading-relaxed">
               {para}
             </p>
@@ -41,8 +52,17 @@ export default function InsightCard({ insight }: InsightCardProps) {
         <p className="text-gray-700 text-sm leading-relaxed">{preview}</p>
       )}
 
+      {expanded && journeyText && (
+        <div className="mt-5 rounded-xl bg-indigo-50 border border-indigo-200 p-4">
+          <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">
+            Your Journey So Far
+          </p>
+          <p className="text-sm text-indigo-900 leading-relaxed">{journeyText}</p>
+        </div>
+      )}
+
       <div className="mt-4 flex items-center justify-between">
-        {isLong && (
+        {showToggle && (
           <button
             onClick={() => setExpanded((e) => !e)}
             className="text-sm font-medium text-[#1D9E75] hover:underline"

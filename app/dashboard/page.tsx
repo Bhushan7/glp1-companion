@@ -153,7 +153,10 @@ export default async function DashboardPage() {
 
         {/* Generate Insight */}
         <div className="mb-6 md:mb-8">
-          <GenerateInsightButton />
+          <GenerateInsightButton
+            lastInsightDate={weeklyInsights[0]?.created_at ?? null}
+            nextAvailableDate={null}
+          />
         </div>
 
         {/* Recent Insights */}

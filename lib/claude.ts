@@ -14,8 +14,9 @@ export async function generateWeeklyInsight(
     start_date?: string | null;
     current_weight_kg?: number | null;
     starting_weight_kg?: number | null;
-  }
-): Promise<string> {
+  },
+  priorInsights: string[]
+): Promise<{ weeklyInsight: string; journeyInsight: string }> {
   const logSummary = logs
     .map((log) => {
       const foodTagStr =
@@ -74,5 +75,46 @@ Paragraph 4 — One thing for next week: Give exactly one specific, achievable a
     throw new Error("Unexpected response type from Claude");
   }
 
-  return content.text;
+  const weeklyInsight = content.text;
+
+  if (priorInsights.length === 0) {
+    return {
+      weeklyInsight,
+      journeyInsight:
+        "This is your first insight — check back next week for your journey summary.",
+    };
+  }
+
+  const journeyContext = priorInsights
+    .map((t, i) => `--- Week ${i + 1} ---\n${t}`)
+    .join("\n\n");
+
+  const journeyPrompt = `You are a compassionate GLP-1 companion coach. Review this user's complete journey history and write exactly 5 sentences in plain prose — no bullet points, no markdown, no bold text, no headers.
+
+Here are all of their previous weekly insights in chronological order:
+${journeyContext}
+
+Write exactly 5 sentences:
+Sentence 1: What has consistently worked for this user (weight trend, protein habits, energy patterns).
+Sentence 2: What has been a recurring challenge (side effects, low protein, plateaus).
+Sentence 3: How their overall journey is progressing based on the full history.
+Sentences 4–5: A motivational message. If the overall trajectory is positive (weight trending down, protein improving, energy stable or rising), write an affirming message acknowledging their consistency. If the trajectory is struggling (weight stalled or rising, protein consistently low, frequent side effects), write an encouraging message that normalises difficulty and reinforces that staying the course matters.
+
+Output exactly 5 sentences, nothing else.`;
+
+  const journeyMessage = await client.messages.create({
+    model: "claude-opus-4-5",
+    max_tokens: 400,
+    messages: [{ role: "user", content: journeyPrompt }],
+  });
+
+  const journeyContent = journeyMessage.content[0];
+  if (journeyContent.type !== "text") {
+    throw new Error("Unexpected response type from Claude");
+  }
+
+  return {
+    weeklyInsight,
+    journeyInsight: journeyContent.text,
+  };
 }

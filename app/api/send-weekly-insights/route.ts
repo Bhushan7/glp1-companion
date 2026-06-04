@@ -39,7 +39,23 @@ export async function GET(request: Request) {
     if (!logs || logs.length < 2) continue
 
     try {
-      const insightText = await generateWeeklyInsight(logs as HealthLog[], user)
+      const { data: priorRows } = await admin
+        .from('weekly_insights')
+        .select('insight_text')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: true })
+
+      const priorInsights = (priorRows ?? [])
+        .map((r) => r.insight_text)
+        .filter((t): t is string => !!t)
+
+      const { weeklyInsight, journeyInsight } = await generateWeeklyInsight(
+        logs as HealthLog[],
+        user,
+        priorInsights
+      )
+
+      const insightText = `${weeklyInsight}\n\n---OVERALL JOURNEY---\n\n${journeyInsight}`
 
       const { data: insight } = await admin
         .from('weekly_insights')
@@ -59,7 +75,7 @@ export async function GET(request: Request) {
           user.start_date
             ? Math.floor((Date.now() - new Date(user.start_date).getTime()) / (7 * 24 * 60 * 60 * 1000))
             : 0,
-          insightText,
+          weeklyInsight,
           insight?.pdf_url ?? undefined
         )
       }
