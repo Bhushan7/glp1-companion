@@ -19,6 +19,7 @@ export default function NavBar() {
   const links = [
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/log', label: 'Log Today' },
+    { href: '/logs', label: 'Logs' },
     { href: '/report', label: 'Reports' },
   ]
 
