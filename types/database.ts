@@ -25,6 +25,7 @@ export interface HealthLog {
   energy_level: number | null
   food_noise_level: number | null
   notes: string | null
+  daily_insight_text: string | null  // Haiku-generated coach's note, written on log save
   created_at: string
 }
 

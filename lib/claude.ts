@@ -122,7 +122,7 @@ Paragraph 3 — Muscle loss & protein: ${proteinDeficit ? `This is urgent. They 
 Paragraph 4 — One thing for next week: Give exactly one specific, achievable action for the coming week. It should be the highest-leverage change based on their actual data this week — not generic advice.`;
 
   const message = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 800,
     messages: [
       {
@@ -165,7 +165,7 @@ Sentences 4–5: A motivational message. If the overall trajectory is positive (
 Output exactly 5 sentences, nothing else.`;
 
   const journeyMessage = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 400,
     messages: [{ role: "user", content: journeyPrompt }],
   });
@@ -239,9 +239,67 @@ Write a plain prose taper plan — no bullet points, no markdown, no bold text, 
 The taper should step down gradually from ${maintenanceGoals.current_dose_mg} mg toward ${taperGoal}. Use medically sensible steps (e.g. halving dose each month, or standard semaglutide step-down). Be warm, specific, and practical. This is a plan, not a warning — frame each paragraph around what to do, not what to fear.`;
 
   const message = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 900,
     messages: [{ role: "user", content: taperPrompt }],
+  });
+
+  const content = message.content[0];
+  if (content.type !== "text") {
+    throw new Error("Unexpected response type from Claude");
+  }
+
+  return content.text;
+}
+
+// ─── Daily coach's note (Haiku) ──────────────────────────────────────────────
+
+export async function generateDailyInsight(log: {
+  log_date: string;
+  weight_kg?: number | null;
+  dose_mg?: number | null;
+  injection_time?: string | null;
+  side_effects?: string | null;
+  food_tags?: string[];
+  protein_grams?: number | null;
+  water_oz?: number | null;
+  energy_level?: number | null;
+  food_noise_level?: number | null;
+  notes?: string | null;
+}): Promise<string> {
+  const weightKg = log.weight_kg ?? null;
+  const proteinTarget = weightKg != null ? Math.round(weightKg * 1.2) : null;
+  const proteinPct =
+    proteinTarget && log.protein_grams != null
+      ? Math.round((log.protein_grams / proteinTarget) * 100)
+      : null;
+
+  const foodTagStr =
+    log.food_tags && log.food_tags.length > 0
+      ? log.food_tags.join(", ")
+      : "not logged";
+
+  const prompt = `You are a concise GLP-1 companion coach. The user just logged their health data for today. Write exactly 2–3 sentences in plain prose. No markdown, no bullet points, no headers. Be specific about their actual numbers. Tone: warm and direct, like a coach leaving a quick note after a training session.
+
+Today's log:
+- Date: ${log.log_date}
+- Weight: ${log.weight_kg != null ? `${log.weight_kg} kg` : "not logged"}
+- Dose: ${log.dose_mg != null ? `${log.dose_mg} mg` : "not logged"}
+- Protein: ${log.protein_grams != null ? `${log.protein_grams}g` : "not logged"}${proteinTarget != null ? ` (daily target: ${proteinTarget}g based on body weight)` : ""}${proteinPct != null ? ` — ${proteinPct}% of target` : ""}
+- Water: ${log.water_oz != null ? `${log.water_oz} oz` : "not logged"}
+- Energy: ${log.energy_level != null ? `${log.energy_level}/5` : "not logged"}
+- Food noise: ${log.food_noise_level != null ? `${log.food_noise_level}/10` : "not logged"}
+- Side effects: ${log.side_effects || "none"}
+- Food types eaten: ${foodTagStr}
+- Injection time: ${log.injection_time ?? "not logged"}
+- Notes: ${log.notes || "none"}
+
+Instructions: Pick the single most important observation about today's data. Priority order: (1) if protein is below 50% of target, lead with that and name one specific food that would help; (2) if a side effect is logged alongside a food type, connect them; (3) if food noise is 7+, acknowledge it and give one grounding thought; (4) if it is a solid day overall, acknowledge one specific win. End with one concrete thing they can do or notice tomorrow. Write 2–3 sentences only.`;
+
+  const message = await client.messages.create({
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 150,
+    messages: [{ role: "user", content: prompt }],
   });
 
   const content = message.content[0];

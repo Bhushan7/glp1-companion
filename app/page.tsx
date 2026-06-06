@@ -2,13 +2,12 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import WaitlistForm from '@/components/WaitlistForm'
 import InsightCarousel from '@/components/InsightCarousel'
 
 export const metadata: Metadata = {
-  title: 'GLP-1 Companion — Finally understand your weight loss',
+  title: 'GLP-1 Companion — The AI coach for your GLP-1 journey',
   description:
-    'AI-powered health tracking for GLP-1 medication users. Find patterns in your data, generate doctor reports, and get weekly personalised insights.',
+    'Every other app tracks your shots. GLP-1 Companion tells you what to do about them — protein and muscle coaching, side-effect patterns, plateau reframes, and a personalised weekly AI insight.',
 }
 
 export default async function LandingPage() {
@@ -25,12 +24,17 @@ export default async function LandingPage() {
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <span className="text-lg font-bold text-[#1D9E75] tracking-tight">GLP-1 Companion</span>
-          <Link
-            href="/login"
-            className="text-sm font-medium text-gray-600 hover:text-[#1D9E75] transition-colors"
-          >
-            Sign in
-          </Link>
+          <div className="flex items-center gap-5">
+            <a href="#pricing" className="hidden sm:inline text-sm font-medium text-gray-600 hover:text-[#1D9E75] transition-colors">
+              Pricing
+            </a>
+            <Link
+              href="/login"
+              className="text-sm font-semibold text-white bg-[#1D9E75] px-4 py-2 rounded-lg hover:bg-[#178a64] transition-colors"
+            >
+              Start free
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -56,27 +60,27 @@ export default async function LandingPage() {
           </div>
 
           <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.05] tracking-tight mb-6">
-            Finally understand{' '}
+            Every app tracks your shots.{' '}
             <br className="hidden sm:block" />
-            <span className="text-[#1D9E75]">why your weight loss slowed down</span>
+            <span className="text-[#1D9E75]">This one tells you what to do about them.</span>
           </h1>
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            GLP-1 Companion tracks your doses, symptoms, and habits — then uses AI to find the
-            patterns your doctor doesn't have time to look for.
+            GLP-1 Companion reads your doses, symptoms, protein, and weight — then uses AI to spot the
+            patterns that protect your muscle, ease side effects, and keep you from quitting.
           </p>
 
-          <a
-            href="#waitlist"
+          <Link
+            href="/login"
             className="inline-flex items-center gap-2 bg-[#1D9E75] text-white text-base font-bold px-9 py-4 rounded-xl hover:bg-[#178a64] transition-colors shadow-xl shadow-[#1D9E75]/25"
           >
-            Join the waitlist
+            Start free
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
-          </a>
+          </Link>
 
-          <p className="mt-4 text-sm text-gray-400">First 50 users · Hands-on onboarding · No credit card required</p>
+          <p className="mt-4 text-sm text-gray-400">Free to start · No credit card required · Your first AI insight is on us</p>
         </div>
       </section>
 
@@ -85,9 +89,9 @@ export default async function LandingPage() {
         <p className="text-center text-white font-medium text-sm md:text-base">
           Built for {' '}
           <strong className="underline underline-offset-2 decoration-white/40">
-            million of users
+            millions of people
           </strong>{' '}
-          using GLP-1 medications for weight loss
+          on GLP-1 medications for weight loss
         </p>
       </section>
 
@@ -96,10 +100,10 @@ export default async function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Everything you need to stay on track
+              The coaching layer no tracker has
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Three tools that work together to give you real clarity about your GLP-1 journey.
+              Most apps show you charts. GLP-1 Companion interprets them — like a coach who actually reads your data.
             </p>
           </div>
 
@@ -113,13 +117,26 @@ export default async function LandingPage() {
                   <rect x="17" y="4" width="4" height="16" rx="1" strokeLinejoin="round" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">AI Pattern Insights</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Muscle &amp; protein coaching</h3>
               <p className="text-gray-500 leading-relaxed text-sm">
-                See correlations between your food, hydration, energy, and weight loss. Know what&apos;s working.
+                Up to half the weight you lose on a GLP-1 can be muscle. We track your protein against your target and warn you before it&apos;s a problem.
               </p>
             </div>
 
             {/* Feature 2 */}
+            <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
+              <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
+                <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h4l3 8 4-16 3 8h4" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Side-effect &amp; plateau patterns</h3>
+              <p className="text-gray-500 leading-relaxed text-sm">
+                We connect your injection timing and food to your nausea and fatigue — and reframe plateaus so you don&apos;t quit when the scale stalls.
+              </p>
+            </div>
+
+            {/* Feature 3 */}
             <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
               <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
                 <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -129,23 +146,9 @@ export default async function LandingPage() {
                   <line x1="8" y1="17" x2="13" y2="17" strokeLinecap="round" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Doctor Visit PDF Report</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Personalised weekly AI insight</h3>
               <p className="text-gray-500 leading-relaxed text-sm">
-                One tap generates a summary of your last 4 weeks. Bring it to every appointment.
-              </p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
-              <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
-                <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <rect x="2" y="4" width="20" height="16" rx="2" strokeLinejoin="round" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M2 8l10 6 10-6" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Weekly Insight Report</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">
-                Every Friday, get a personalised email with one thing you did well and one thing to try next week.
+                Every week, a plain-English report on what worked, what to fix, and the one change worth making next — built from your own data.
               </p>
             </div>
           </div>
@@ -160,13 +163,13 @@ export default async function LandingPage() {
       </section>
 
       {/* ─── PRICING ──────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-gray-50">
+      <section id="pricing" className="py-24 px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
               Simple, transparent pricing
             </h2>
-            <p className="text-lg text-gray-500">Start free. Upgrade when you&apos;re ready.</p>
+            <p className="text-lg text-gray-500">Start free. Upgrade when the insights prove their worth.</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
@@ -175,75 +178,87 @@ export default async function LandingPage() {
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Free</p>
               <div className="flex items-baseline gap-1 mb-1">
                 <span className="text-5xl font-extrabold text-gray-900">$0</span>
-                <span className="text-gray-400 text-sm">/month</span>
+                <span className="text-gray-400 text-sm">forever</span>
               </div>
-              <p className="text-sm text-gray-400 mb-8">Get started at no cost</p>
+              <p className="text-sm text-gray-400 mb-8">Everything you need to start</p>
 
               <ul className="space-y-3 mb-10 flex-1">
-                <PricingItem included>7-day log history</PricingItem>
-                <PricingItem included>Basic dose reminders</PricingItem>
-                <PricingItem>AI weekly insights</PricingItem>
-                <PricingItem>Doctor PDF report</PricingItem>
-                <PricingItem>Full history</PricingItem>
+                <PricingItem included>Daily health logging</PricingItem>
+                <PricingItem included>Injection &amp; dose reminders</PricingItem>
+                <PricingItem included>14-day log history</PricingItem>
+                <PricingItem included>1 AI insight to try</PricingItem>
+                <PricingItem>Unlimited weekly AI insights</PricingItem>
               </ul>
 
-              <a
-                href="#waitlist"
+              <Link
+                href="/login"
                 className="block text-center border-2 border-gray-200 text-gray-600 font-semibold py-3.5 rounded-xl hover:border-[#1D9E75] hover:text-[#1D9E75] transition-colors"
               >
-                Join waitlist
-              </a>
+                Start free
+              </Link>
             </div>
 
             {/* Pro */}
             <div className="bg-[#1D9E75] rounded-2xl p-8 flex flex-col relative overflow-hidden">
               <div className="absolute top-5 right-5 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">
-                POPULAR
+                BEST VALUE
               </div>
               <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Pro</p>
               <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-5xl font-extrabold text-white">$9.99</span>
-                <span className="text-white/60 text-sm">/month</span>
+                <span className="text-5xl font-extrabold text-white">$59.99</span>
+                <span className="text-white/60 text-sm">/year</span>
               </div>
-              <p className="text-sm text-white/60 mb-8">Everything you need</p>
+              <p className="text-sm text-white/70 mb-8">Just $5/mo, billed annually · or $8.99/mo</p>
 
               <ul className="space-y-3 mb-10 flex-1">
-                <PricingItemWhite>AI weekly insights every Friday</PricingItemWhite>
-                <PricingItemWhite>Doctor visit PDF report</PricingItemWhite>
-                <PricingItemWhite>Unlimited log history</PricingItemWhite>
-                <PricingItemWhite>Pattern correlation analysis</PricingItemWhite>
-                <PricingItemWhite>Cancel anytime</PricingItemWhite>
+                <PricingItemWhite>Unlimited weekly AI insights</PricingItemWhite>
+                <PricingItemWhite>Muscle &amp; protein deficit coaching</PricingItemWhite>
+                <PricingItemWhite>Side-effect &amp; plateau analysis</PricingItemWhite>
+                <PricingItemWhite>Food-noise &amp; psychology tracking</PricingItemWhite>
+                <PricingItemWhite>Unlimited history &amp; doctor PDF</PricingItemWhite>
               </ul>
 
-              <a
-                href="#waitlist"
+              <Link
+                href="/login"
                 className="block text-center bg-white text-[#1D9E75] font-bold py-3.5 rounded-xl hover:bg-gray-50 transition-colors"
               >
-                Join waitlist
-              </a>
+                Start 7-day free trial
+              </Link>
+              <p className="mt-3 text-center text-xs text-white/60">7-day free trial · cancel anytime</p>
             </div>
           </div>
+
+          {/* Maintenance add-on note */}
+          <p className="mt-8 text-center text-sm text-gray-500">
+            Approaching your goal weight?{' '}
+            <span className="font-semibold text-gray-700">Maintenance &amp; off-ramp planning</span>{' '}
+            is available as an add-on for Pro members.
+          </p>
         </div>
       </section>
 
-      {/* ─── WAITLIST ─────────────────────────────────────────── */}
+      {/* ─── FINAL CTA ────────────────────────────────────────── */}
       <section
-        id="waitlist"
         className="py-24 px-6"
         style={{ background: 'linear-gradient(135deg, #0a5e42 0%, #1D9E75 60%, #24b585 100%)' }}
       >
         <div className="max-w-xl mx-auto text-center">
-          <p className="text-white/60 text-sm font-semibold uppercase tracking-widest mb-4">
-            Limited spots available
-          </p>
           <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-            Get early access
+            Understand your journey this week
           </h2>
           <p className="text-lg text-white/75 mb-10 leading-relaxed">
-            We&apos;re onboarding our first 50 users manually. Join the waitlist and we&apos;ll
-            reach out within 24 hours.
+            Sign up free, log a few days, and get a personalised AI insight that actually tells you
+            what to do next. No credit card required.
           </p>
-          <WaitlistForm />
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 bg-white text-[#1D9E75] text-base font-bold px-9 py-4 rounded-xl hover:bg-gray-50 transition-colors shadow-xl"
+          >
+            Start free
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
         </div>
       </section>
 
@@ -255,7 +270,7 @@ export default async function LandingPage() {
             GLP-1 Companion is a personal wellness journal, not a medical device. Always follow
             your doctor&apos;s guidance.
           </p>
-          <p className="mt-4 text-xs text-gray-300">© 2025 GLP-1 Companion. All rights reserved.</p>
+          <p className="mt-4 text-xs text-gray-300">© 2026 GLP-1 Companion. All rights reserved.</p>
         </div>
       </footer>
     </div>
