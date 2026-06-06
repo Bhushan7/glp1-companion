@@ -24,15 +24,15 @@ export async function POST() {
     return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
   }
 
-  // Get last 7 days of logs
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  // Fetch 30 days so Claude can detect weight plateaus (needs 14+ day window)
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     .toISOString().split('T')[0]
 
   const { data: logs } = await admin
     .from('health_logs')
     .select('*')
     .eq('user_id', user.id)
-    .gte('log_date', sevenDaysAgo)
+    .gte('log_date', thirtyDaysAgo)
     .order('log_date', { ascending: true })
 
   if (!logs || logs.length < 2) {

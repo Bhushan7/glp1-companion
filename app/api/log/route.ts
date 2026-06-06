@@ -22,6 +22,7 @@ export async function POST(request: Request) {
     protein_grams,
     water_oz,
     energy_level,
+    food_noise_level,
     notes,
   } = body
 
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
       protein_grams: protein_grams ?? null,
       water_oz: water_oz ?? null,
       energy_level: energy_level ?? null,
+      food_noise_level: food_noise_level ?? null,
       notes: notes ?? null,
     },
     { onConflict: 'user_id,log_date' }
