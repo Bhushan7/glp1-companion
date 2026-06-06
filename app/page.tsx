@@ -83,9 +83,9 @@ export default async function LandingPage() {
       {/* ─── SOCIAL PROOF ─────────────────────────────────────── */}
       <section className="bg-[#1D9E75] py-5 px-6">
         <p className="text-center text-white font-medium text-sm md:text-base">
-          Built for the{' '}
+          Built for {' '}
           <strong className="underline underline-offset-2 decoration-white/40">
-            12 million Americans
+            million of users
           </strong>{' '}
           using GLP-1 medications for weight loss
         </p>
