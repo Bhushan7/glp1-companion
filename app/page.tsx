@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import WaitlistForm from '@/components/WaitlistForm'
+import InsightCarousel from '@/components/InsightCarousel'
 
 export const metadata: Metadata = {
   title: 'GLP-1 Companion — Finally understand your weight loss',
@@ -148,6 +149,13 @@ export default async function LandingPage() {
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── INSIGHT CAROUSEL ─────────────────────────────────── */}
+      <section className="py-16 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <InsightCarousel />
         </div>
       </section>
 
