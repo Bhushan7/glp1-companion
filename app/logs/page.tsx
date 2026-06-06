@@ -17,6 +17,19 @@ function formatDate(dateStr: string): string {
   })
 }
 
+// Sparkle icon for the coach's note
+function SparkleIcon() {
+  return (
+    <svg
+      className="w-3.5 h-3.5 text-[#1D9E75] shrink-0 mt-px"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+    >
+      <path d="M12 2l2.09 6.26L20.5 10l-6.41 1.74L12 18l-2.09-6.26L3.5 10l6.41-1.74L12 2z" />
+    </svg>
+  )
+}
+
 export default async function LogsPage() {
   const supabase = createClient()
   const {
@@ -55,14 +68,15 @@ export default async function LogsPage() {
 
               return (
                 <div key={log.id} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                  {/* Date header */}
+
+                  {/* ── Date header ─────────────────────────────────── */}
                   <div className="px-5 py-3 md:px-6 md:py-4 border-b border-gray-100">
                     <h2 className="text-sm md:text-base font-semibold text-gray-900">
                       {formatDate(log.log_date)}
                     </h2>
                   </div>
 
-                  {/* Stats 2×2 grid */}
+                  {/* ── Stats 2×2 grid ──────────────────────────────── */}
                   <div className="p-4 md:p-5 grid grid-cols-2 gap-3">
                     <StatCard
                       label="Weight"
@@ -77,11 +91,12 @@ export default async function LogsPage() {
                       value={log.energy_level != null ? `${log.energy_level} / 5` : '—'}
                     />
                     <StatCard
-                      label="Water"
-                      value={log.water_oz != null ? `${log.water_oz} oz` : '—'}
+                      label="Protein"
+                      value={log.protein_grams != null ? `${log.protein_grams} g` : '—'}
                     />
                   </div>
 
+                  {/* ── Side effects ─────────────────────────────────── */}
                   {sideEffects.length > 0 && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
@@ -100,6 +115,7 @@ export default async function LogsPage() {
                     </div>
                   )}
 
+                  {/* ── Food tags ────────────────────────────────────── */}
                   {foodTags.length > 0 && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
@@ -118,6 +134,7 @@ export default async function LogsPage() {
                     </div>
                   )}
 
+                  {/* ── Food noise ───────────────────────────────────── */}
                   {log.food_noise_level != null && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
@@ -137,6 +154,7 @@ export default async function LogsPage() {
                     </div>
                   )}
 
+                  {/* ── Injection time ───────────────────────────────── */}
                   {log.injection_time && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
@@ -146,6 +164,7 @@ export default async function LogsPage() {
                     </div>
                   )}
 
+                  {/* ── Notes ───────────────────────────────────────── */}
                   {log.notes && log.notes.trim() && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">
@@ -154,6 +173,24 @@ export default async function LogsPage() {
                       <p className="text-sm text-gray-700 whitespace-pre-wrap">{log.notes}</p>
                     </div>
                   )}
+
+                  {/* ── Coach's note (daily Haiku insight) ──────────── */}
+                  {log.daily_insight_text && (
+                    <div className="mx-4 mb-4 md:mx-5 md:mb-5 bg-[#edfbf4] border border-[#1D9E75]/20 rounded-xl px-4 py-3">
+                      <div className="flex items-start gap-2">
+                        <SparkleIcon />
+                        <div>
+                          <p className="text-xs font-semibold text-[#1D9E75] uppercase tracking-wide mb-1">
+                            Coach's note
+                          </p>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {log.daily_insight_text}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )
             })}
