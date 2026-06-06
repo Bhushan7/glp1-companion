@@ -7,6 +7,7 @@ import InsightCard from '@/components/InsightCard'
 import GenerateInsightButton from '@/components/GenerateInsightButton'
 import ProteinAlertCard from '@/components/ProteinAlertCard'
 import PlateauCard from '@/components/PlateauCard'
+import OffRampScoreCard from '@/components/OffRampScoreCard'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -149,6 +150,8 @@ export default async function DashboardPage() {
       : 'stable'
 
   const firstName = profile.name?.split(' ')[0]
+  const fourteenDayLogs = allLogs.filter((l) => l.log_date >= fourteenDaysAgo)
+  const isPro = profile?.subscription_status === 'pro'
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -249,6 +252,11 @@ export default async function DashboardPage() {
             ))}
           </div>
         )}
+
+        {/* Off-Ramp Readiness Score */}
+        <div className="mt-6 md:mt-8">
+          <OffRampScoreCard logs={fourteenDayLogs} isPro={isPro} />
+        </div>
       </main>
 
       {/* Mobile bottom nav */}

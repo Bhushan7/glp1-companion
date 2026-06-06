@@ -20,6 +20,7 @@ export default function NavBar() {
     { href: '/dashboard', label: 'Dashboard' },
     { href: '/log', label: 'Log Today' },
     { href: '/logs', label: 'Logs' },
+    { href: '/injections', label: 'Injections' },
     { href: '/report', label: 'Reports' },
   ]
 

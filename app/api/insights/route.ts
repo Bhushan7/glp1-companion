@@ -74,10 +74,19 @@ export async function POST() {
     .map((r) => r.insight_text)
     .filter((t): t is string => !!t)
 
+  // Fetch 4 most recent injections for pattern context
+  const { data: recentInjections } = await admin
+    .from('injections')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('injected_at', { ascending: false })
+    .limit(4)
+
   const { weeklyInsight, journeyInsight } = await generateWeeklyInsight(
     logs as HealthLog[],
     profile,
-    priorInsights
+    priorInsights,
+    recentInjections ?? undefined
   )
 
   const insightText = `${weeklyInsight}\n\n---OVERALL JOURNEY---\n\n${journeyInsight}`
