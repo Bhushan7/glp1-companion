@@ -1,87 +1,115 @@
 'use client'
 
 import { useState } from 'react'
-import type { WeeklyInsight } from '@/types/database'
-
-const JOURNEY_SEPARATOR = '---OVERALL JOURNEY---'
+import UpgradePaywall from './UpgradePaywall'
 
 interface InsightCardProps {
-  insight: WeeklyInsight
+  insight: string | null
+  journeyInsight: string | null
+  isLoading?: boolean
+  error?: string | null
+  upgradeRequired?: boolean
 }
 
-export default function InsightCard({ insight }: InsightCardProps) {
-  const [expanded, setExpanded] = useState(false)
+export default function InsightCard({
+  insight,
+  journeyInsight,
+  isLoading = false,
+  error,
+  upgradeRequired = false,
+}: InsightCardProps) {
+  const [isExpanded, setIsExpanded] = useState(false)
 
-  const weekLabel = new Date(insight.week_ending).toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  })
+  // Parse the combined insight text (if it contains the separator)
+  const parts = insight ? insight.split('---OVERALL JOURNEY---') : []
+  const weeklyText = parts[0]?.trim() || insight
+  const journeyText = journeyInsight || (parts[1]?.trim() || '')
 
-  const fullText = insight.insight_text ?? 'No insight text available.'
-
-  const separatorIndex = fullText.indexOf(JOURNEY_SEPARATOR)
-  const hasJourney = separatorIndex !== -1
-
-  const weeklyText = hasJourney ? fullText.slice(0, separatorIndex).trim() : fullText
-  const journeyText = hasJourney
-    ? fullText.slice(separatorIndex + JOURNEY_SEPARATOR.length).trim()
-    : null
-
-  const weeklyParagraphs = weeklyText.split(/\n\n+/).filter(Boolean)
-  const isLong = weeklyText.length > 200
-  const preview = isLong ? weeklyText.slice(0, 200).trimEnd() + '…' : weeklyText
-
-  const showToggle = isLong || hasJourney
-
-  return (
-    <div className="bg-white rounded-xl shadow-sm p-5 md:p-6">
-      <p className="text-xs font-semibold text-[#1D9E75] uppercase tracking-wide mb-3">
-        Week ending {weekLabel}
-      </p>
-
-      {expanded ? (
-        <div className="space-y-3">
-          {weeklyParagraphs.map((para, i) => (
-            <p key={i} className="text-gray-700 text-sm leading-relaxed">
-              {para}
+  // ── Upgrade required: show paywall over dimmed insight ──────────────────
+  if (upgradeRequired && insight) {
+    return (
+      <>
+        {/* Dimmed insight in background */}
+        <div className="opacity-40 pointer-events-none">
+          <div className="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-gray-100">
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">
+              Weekly Insight
             </p>
-          ))}
+            <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{weeklyText}</p>
+          </div>
         </div>
-      ) : (
-        <p className="text-gray-700 text-sm leading-relaxed">{preview}</p>
-      )}
 
-      {expanded && journeyText && (
-        <div className="mt-5 rounded-xl bg-indigo-50 border border-indigo-200 p-4">
-          <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-2">
-            Your Journey So Far
-          </p>
-          <p className="text-sm text-indigo-900 leading-relaxed">{journeyText}</p>
+        {/* Paywall overlay */}
+        <UpgradePaywall />
+      </>
+    )
+  }
+
+  // ── Loading state ──────────────────────────────────────────────────────
+  if (isLoading) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-gray-100">
+        <div className="animate-pulse space-y-3">
+          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
         </div>
-      )}
-
-      <div className="mt-4 flex items-center justify-between">
-        {showToggle && (
-          <button
-            onClick={() => setExpanded((e) => !e)}
-            className="text-sm font-medium text-[#1D9E75] hover:underline"
-          >
-            {expanded ? 'Show less' : 'Read full insight'}
-          </button>
-        )}
-
-        {insight.pdf_url && (
-          <a
-            href={insight.pdf_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-auto text-sm font-medium text-gray-400 hover:text-[#1D9E75] transition-colors"
-          >
-            Download PDF →
-          </a>
-        )}
       </div>
+    )
+  }
+
+  // ── Error state ────────────────────────────────────────────────────────
+  if (error) {
+    return (
+      <div className="bg-red-50 rounded-xl border border-red-200 p-6">
+        <p className="text-sm text-red-700">{error}</p>
+      </div>
+    )
+  }
+
+  // ── No insight yet ─────────────────────────────────────────────────────
+  if (!insight) {
+    return (
+      <div className="bg-gray-50 rounded-xl border border-gray-200 p-8 text-center">
+        <p className="text-sm text-gray-500">
+          Log some health data, then click "Generate Insight" to see your personalized coaching.
+        </p>
+      </div>
+    )
+  }
+
+  // ── Normal insight display ──────────────────────────────────────────────
+  return (
+    <div className="space-y-4">
+      {/* Weekly insight */}
+      <div className="bg-white rounded-xl shadow-sm p-6 md:p-8 border border-gray-100">
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">
+          Weekly Insight
+        </p>
+        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{weeklyText}</p>
+      </div>
+
+      {/* Journey insight (if available) */}
+      {journeyText && (
+        <div className="bg-indigo-50 rounded-xl border border-indigo-200/40 p-6 md:p-8">
+          <div
+            className="cursor-pointer"
+            onClick={() => setIsExpanded(!isExpanded)}
+          >
+            <p className="text-xs font-bold text-indigo-700 uppercase tracking-wide mb-2">
+              Your Journey So Far
+            </p>
+            <p className={`text-indigo-900 leading-relaxed ${!isExpanded ? 'line-clamp-3' : ''}`}>
+              {journeyText}
+            </p>
+            {!isExpanded && (
+              <p className="text-xs text-indigo-600 font-semibold mt-2 hover:text-indigo-700">
+                Read more →
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

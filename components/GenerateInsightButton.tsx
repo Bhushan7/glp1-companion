@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import InsightCard from './InsightCard'
-import type { WeeklyInsight } from '@/types/database'
 
 function addSevenDays(from: Date): string {
   return new Date(from.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString()
@@ -24,7 +23,9 @@ export default function GenerateInsightButton({
   nextAvailableDate: string | null
 }) {
   const [loading, setLoading] = useState(false)
-  const [insight, setInsight] = useState<WeeklyInsight | null>(null)
+  const [insight, setInsight] = useState<string | null>(null)
+  const [journeyInsight, setJourneyInsight] = useState<string | null>(null)
+  const [upgradeRequired, setUpgradeRequired] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [nextAvailableDate, setNextAvailableDate] = useState<string | null>(
     nextAvailableProp ?? (lastInsightDate ? addSevenDays(new Date(lastInsightDate)) : null)
@@ -35,6 +36,7 @@ export default function GenerateInsightButton({
   async function handleGenerate() {
     setLoading(true)
     setError(null)
+    setUpgradeRequired(false)
 
     const res = await fetch('/api/insights', { method: 'POST' })
     const data = await res.json()
@@ -43,7 +45,12 @@ export default function GenerateInsightButton({
 
     if (res.ok) {
       setInsight(data.insight)
+      setJourneyInsight(data.journeyInsight ?? null)
       setNextAvailableDate(addSevenDays(new Date()))
+    } else if (data.error === 'upgrade_required') {
+      setInsight(data.insight)
+      setJourneyInsight(data.journeyInsight ?? null)
+      setUpgradeRequired(true)
     } else if (res.status === 429) {
       setNextAvailableDate(data.next_available)
     } else {
@@ -57,7 +64,11 @@ export default function GenerateInsightButton({
         <p className="text-xs font-semibold text-[#1D9E75] uppercase tracking-wide mb-3">
           ✓ Insight generated
         </p>
-        <InsightCard insight={insight} />
+        <InsightCard
+          insight={insight}
+          journeyInsight={journeyInsight}
+          upgradeRequired={upgradeRequired}
+        />
       </div>
     )
   }

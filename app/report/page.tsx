@@ -36,9 +36,18 @@ export default async function ReportPage() {
           </div>
         ) : (
           <div className="space-y-3 md:space-y-4">
-            {weeklyInsights.map((insight) => (
-              <InsightCard key={insight.id} insight={insight} />
-            ))}
+            {weeklyInsights.map((wi) => {
+              const parts = wi.insight_text ? wi.insight_text.split('---OVERALL JOURNEY---') : []
+              const weeklyText = parts[0]?.trim() || wi.insight_text
+              const journeyText = parts[1]?.trim() || null
+              return (
+                <InsightCard
+                  key={wi.id}
+                  insight={weeklyText}
+                  journeyInsight={journeyText}
+                />
+              )
+            })}
           </div>
         )}
       </main>
