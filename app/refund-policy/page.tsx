@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Refund Policy — GLP-1 Companion',
+  title: 'Refund Policy — GLP Coach',
 }
 
 export default function RefundPolicyPage() {
@@ -10,7 +10,7 @@ export default function RefundPolicyPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-10">
-          <Link href="/" className="text-sm text-[#1D9E75] hover:underline">← Back to GLP-1 Companion</Link>
+          <Link href="/" className="text-sm text-[#1D9E75] hover:underline">← Back to GLP Coach</Link>
           <h1 className="mt-4 text-3xl font-bold text-gray-900">Refund Policy</h1>
           <p className="mt-1 text-sm text-gray-500">Effective Date: June 2026 · Last Updated: June 2026</p>
         </div>
@@ -18,7 +18,7 @@ export default function RefundPolicyPage() {
         <div className="prose-policy">
 
           <Section title="1. Overview">
-            <p>At GLP-1 Companion, we want you to be satisfied with your subscription. This Refund Policy explains how refunds work and how to cancel your subscription.</p>
+            <p>At GLP Coach, we want you to be satisfied with your subscription. This Refund Policy explains how refunds work and how to cancel your subscription.</p>
           </Section>
 
           <Section title="2. Refund Eligibility">
@@ -149,7 +149,7 @@ export default function RefundPolicyPage() {
           </Section>
 
           <Section title="12. Special Circumstances">
-            <p>GLP-1 Companion may issue refunds in special circumstances, including:</p>
+            <p>GLP Coach may issue refunds in special circumstances, including:</p>
             <ul>
               <li>Service outages lasting more than 7 days</li>
               <li>Significant unresolved technical issues preventing use of the Service</li>
@@ -159,13 +159,13 @@ export default function RefundPolicyPage() {
           </Section>
 
           <Section title="13. Changes to Refund Policy">
-            <p>GLP-1 Companion reserves the right to modify this Refund Policy at any time. Changes will be posted on this page with an updated "Last Updated" date.</p>
+            <p>GLP Coach reserves the right to modify this Refund Policy at any time. Changes will be posted on this page with an updated "Last Updated" date.</p>
           </Section>
 
           <Section title="14. Contact Information">
             <p>For refund requests, cancellations, or questions about this policy:</p>
             <ContactBlock>
-              <strong>GLP-1 Companion Support</strong><br />
+              <strong>GLP Coach Support</strong><br />
               Email: <a href="mailto:support@glpcoach.us" className="text-[#1D9E75] hover:underline">support@glpcoach.us</a><br />
               Website: glpcoach.us<br />
               Response time: Within 24–48 hours (Monday–Friday, EST)
@@ -173,13 +173,13 @@ export default function RefundPolicyPage() {
           </Section>
 
           <Section title="15. No Refund of Free Tiers">
-            <p>The free tier of GLP-1 Companion is complimentary and non-refundable (as it is free).</p>
+            <p>The free tier of GLP Coach is complimentary and non-refundable (as it is free).</p>
           </Section>
 
         </div>
 
         <p className="mt-12 text-xs text-gray-400 border-t border-gray-100 pt-6">
-          By subscribing to GLP-1 Companion Pro, you agree to this Refund Policy. Last Updated: June 2026.
+          By subscribing to GLP Coach Pro, you agree to this Refund Policy. Last Updated: June 2026.
         </p>
       </div>
     </main>

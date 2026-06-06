@@ -5,9 +5,9 @@ import { createClient } from '@/lib/supabase/server'
 import InsightCarousel from '@/components/InsightCarousel'
 
 export const metadata: Metadata = {
-  title: 'GLP-1 Companion — The AI coach for your GLP-1 journey',
+  title: 'GLP Coach — The AI coach for your GLP-1 journey',
   description:
-    'Every other app tracks your shots. GLP-1 Companion tells you what to do about them — protein and muscle coaching, side-effect patterns, plateau reframes, and a personalised weekly AI insight.',
+    'Every other app tracks your shots. GLP Coach tells you what to do about them — protein and muscle coaching, side-effect patterns, plateau reframes, and a personalised weekly AI insight.',
 }
 
 export default async function LandingPage() {
@@ -23,7 +23,7 @@ export default async function LandingPage() {
       {/* ─── NAV ──────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-lg font-bold text-[#1D9E75] tracking-tight">GLP-1 Companion</span>
+          <span className="text-lg font-bold text-[#1D9E75] tracking-tight">GLP Coach</span>
           <div className="flex items-center gap-5">
             <a href="#pricing" className="hidden sm:inline text-sm font-medium text-gray-600 hover:text-[#1D9E75] transition-colors">
               Pricing
@@ -66,7 +66,7 @@ export default async function LandingPage() {
           </h1>
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            GLP-1 Companion reads your doses, symptoms, protein, and weight — then uses AI to spot the
+            GLP Coach reads your doses, symptoms, protein, and weight — then uses AI to spot the
             patterns that protect your muscle, ease side effects, and keep you from quitting.
           </p>
 
@@ -87,7 +87,7 @@ export default async function LandingPage() {
       {/* ─── SOCIAL PROOF ─────────────────────────────────────── */}
       <section className="bg-[#1D9E75] py-5 px-6">
         <p className="text-center text-white font-medium text-sm md:text-base">
-          Built for {' '}
+          Built for the{' '}
           <strong className="underline underline-offset-2 decoration-white/40">
             millions of people
           </strong>{' '}
@@ -103,7 +103,7 @@ export default async function LandingPage() {
               The coaching layer no tracker has
             </h2>
             <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Most apps show you charts. GLP-1 Companion interprets them — like a coach who actually reads your data.
+              Most apps show you charts. GLP Coach interprets them — like a coach who actually reads your data.
             </p>
           </div>
 
@@ -265,12 +265,23 @@ export default async function LandingPage() {
       {/* ─── FOOTER ───────────────────────────────────────────── */}
       <footer className="py-10 px-6 bg-white border-t border-gray-100">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm font-bold text-[#1D9E75] mb-3">GLP-1 Companion</p>
+          <p className="text-sm font-bold text-[#1D9E75] mb-3">GLP Coach</p>
           <p className="text-xs text-gray-400 max-w-md mx-auto leading-relaxed">
-            GLP-1 Companion is a personal wellness journal, not a medical device. Always follow
+            GLP Coach is a personal wellness journal, not a medical device. Always follow
             your doctor&apos;s guidance.
           </p>
-          <p className="mt-4 text-xs text-gray-300">© 2026 GLP-1 Companion. All rights reserved.</p>
+          <div className="mt-4 flex items-center justify-center gap-4">
+            <Link href="/privacy-policy" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms-of-service" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
+              Terms of Service
+            </Link>
+            <Link href="/refund-policy" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
+              Refund Policy
+            </Link>
+          </div>
+          <p className="mt-4 text-xs text-gray-300">© 2026 GLP Coach. All rights reserved.</p>
         </div>
       </footer>
     </div>

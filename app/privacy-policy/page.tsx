@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
 export const metadata = {
-  title: 'Privacy Policy — GLP-1 Companion',
+  title: 'Privacy Policy — GLP Coach',
 }
 
 export default function PrivacyPolicyPage() {
@@ -10,7 +10,7 @@ export default function PrivacyPolicyPage() {
       <div className="max-w-4xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-10">
-          <Link href="/" className="text-sm text-[#1D9E75] hover:underline">← Back to GLP-1 Companion</Link>
+          <Link href="/" className="text-sm text-[#1D9E75] hover:underline">← Back to GLP Coach</Link>
           <h1 className="mt-4 text-3xl font-bold text-gray-900">Privacy Policy</h1>
           <p className="mt-1 text-sm text-gray-500">Effective Date: June 2026 · Last Updated: June 2026</p>
           <p className="mt-2 text-sm text-gray-600">This Policy applies to all users, including those in the United States, European Union, and elsewhere.</p>
@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
         <div className="prose-policy">
 
           <Section title="1. Introduction">
-            <p>GLP-1 Companion ("we," "us," "our," or "Company") operates glpcoach.us ("Website") and the GLP-1 Companion application ("Service"). We are committed to protecting your privacy. This Privacy Policy explains our data practices and your rights.</p>
+            <p>GLP Coach ("we," "us," "our," or "Company") operates glpcoach.us ("Website") and the GLP Coach application ("Service"). We are committed to protecting your privacy. This Privacy Policy explains our data practices and your rights.</p>
           </Section>
 
           <Section title="2. Information We Collect">
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
               <p>We may disclose information if required by law, court order, or government request.</p>
             </SubSection>
             <SubSection title="4.3 Business Transfer">
-              <p>If GLP-1 Companion is acquired or merged, your data may be transferred as part of that transaction. We will notify you of any such change.</p>
+              <p>If GLP Coach is acquired or merged, your data may be transferred as part of that transaction. We will notify you of any such change.</p>
             </SubSection>
             <SubSection title="4.4 No Third-Party Sharing">
               <Callout variant="green"><strong>We do NOT share your health data with healthcare providers, insurance companies, employers, or other third parties without your explicit written consent.</strong></Callout>
@@ -199,7 +199,7 @@ export default function PrivacyPolicyPage() {
           <Section title="15. Contact Information">
             <p>For questions about this Privacy Policy or to exercise your rights:</p>
             <ContactBlock>
-              <strong>GLP-1 Companion</strong><br />
+              <strong>GLP Coach</strong><br />
               Email: <a href="mailto:legal@glpcoach.us" className="text-[#1D9E75] hover:underline">legal@glpcoach.us</a><br />
               Website: glpcoach.us<br /><br />
               <strong>For EU/GDPR inquiries:</strong><br />

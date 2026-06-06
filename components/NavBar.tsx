@@ -30,7 +30,7 @@ export default function NavBar() {
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2">
           <span className="text-lg md:text-xl font-bold text-[#1D9E75]">
-            GLP-1 Companion
+            GLP Coach
           </span>
         </Link>
 
