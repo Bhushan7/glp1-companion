@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Footer from '@/components/Footer'
 
 export const metadata: Metadata = {
   title: 'GLP-1 Companion',
@@ -9,7 +10,10 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className="bg-gray-50 text-gray-700 antialiased">{children}</body>
+      <body className="bg-gray-50 text-gray-700 antialiased flex flex-col min-h-screen">
+        {children}
+        <Footer />
+      </body>
     </html>
   )
 }
