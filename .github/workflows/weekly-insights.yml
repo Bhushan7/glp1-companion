@@ -1,0 +1,15 @@
+name: Send Weekly Insights
+
+on:
+  schedule:
+    - cron: '0 8 * * 5'  # Friday 8am UTC
+  workflow_dispatch:  # Manual trigger for testing
+
+jobs:
+  send-insights:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger weekly insights
+        run: |
+          curl -X GET https://glpcoach.us/api/send-weekly-insights \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
