@@ -118,6 +118,25 @@ export default async function LogsPage() {
                     </div>
                   )}
 
+                  {log.food_noise_level != null && (
+                    <div className="px-4 pb-4 md:px-5 md:pb-5">
+                      <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                        Food Noise
+                      </p>
+                      <span
+                        className={`inline-flex px-3 py-1.5 rounded-full text-xs font-semibold ${
+                          log.food_noise_level <= 3
+                            ? 'bg-green-100 text-green-700 border border-green-200'
+                            : log.food_noise_level <= 6
+                            ? 'bg-amber-100 text-amber-700 border border-amber-200'
+                            : 'bg-red-100 text-red-700 border border-red-200'
+                        }`}
+                      >
+                        Food noise: {log.food_noise_level}/10
+                      </span>
+                    </div>
+                  )}
+
                   {log.injection_time && (
                     <div className="px-4 pb-4 md:px-5 md:pb-5">
                       <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">

@@ -6,6 +6,7 @@ import StatCard from '@/components/StatCard'
 import InsightCard from '@/components/InsightCard'
 import GenerateInsightButton from '@/components/GenerateInsightButton'
 import ProteinAlertCard from '@/components/ProteinAlertCard'
+import PlateauCard from '@/components/PlateauCard'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -44,7 +45,13 @@ export default async function DashboardPage() {
     redirect('/onboarding')
   }
 
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0]
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0]
+  const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
     .toISOString()
     .split('T')[0]
 
@@ -53,7 +60,7 @@ export default async function DashboardPage() {
       .from('health_logs')
       .select('*')
       .eq('user_id', user.id)
-      .gte('log_date', sevenDaysAgo)
+      .gte('log_date', thirtyDaysAgo)
       .order('log_date', { ascending: false }),
     supabase
       .from('weekly_insights')
@@ -63,18 +70,21 @@ export default async function DashboardPage() {
       .limit(4),
   ])
 
-  const healthLogs = (logs ?? []) as HealthLog[]
+  const allLogs = (logs ?? []) as HealthLog[]
   const weeklyInsights = (insights ?? []) as WeeklyInsight[]
 
-  const streak = calculateStreak(healthLogs)
-  const latestWeight = healthLogs.find((l) => l.weight_kg != null)?.weight_kg
-  const oldestWeight = [...healthLogs].reverse().find((l) => l.weight_kg != null)?.weight_kg
+  const recentLogs = allLogs.filter((l) => l.log_date >= sevenDaysAgo)
+  const prevWeekLogs = allLogs.filter(
+    (l) => l.log_date >= fourteenDaysAgo && l.log_date < sevenDaysAgo
+  )
+
+  const streak = calculateStreak(allLogs)
+  const latestWeight = allLogs.find((l) => l.weight_kg != null)?.weight_kg
+  const oldestWeight = [...allLogs].reverse().find((l) => l.weight_kg != null)?.weight_kg
   const weightDelta =
     latestWeight != null && oldestWeight != null
       ? +(latestWeight - oldestWeight).toFixed(1)
       : null
-
-  const recentLogs = healthLogs
 
   const proteinLogs = recentLogs.filter((l) => l.protein_grams != null)
   const avgProtein =
@@ -86,6 +96,57 @@ export default async function DashboardPage() {
       : null
 
   const weightKg = profile?.current_weight_kg ?? profile?.starting_weight_kg ?? 80
+
+  // Plateau detection: 14+ calendar-day span of weight logs with < 0.5kg variance
+  const weightLogs = [...allLogs]
+    .filter((l) => l.weight_kg != null)
+    .sort((a, b) => a.log_date.localeCompare(b.log_date))
+
+  let isOnPlateau = false
+  let plateauDays = 0
+
+  if (weightLogs.length >= 14) {
+    const weights = weightLogs.map((l) => l.weight_kg as number)
+    const maxW = Math.max(...weights)
+    const minW = Math.min(...weights)
+    const firstDate = new Date(weightLogs[0].log_date)
+    const lastDate = new Date(weightLogs[weightLogs.length - 1].log_date)
+    const span = Math.round(
+      (lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)
+    )
+    if (maxW - minW < 0.5 && span >= 14) {
+      isOnPlateau = true
+      plateauDays = span
+    }
+  }
+
+  function calcAvg(arr: HealthLog[], field: 'protein_grams' | 'energy_level'): number | null {
+    const valid = arr.filter((l) => l[field] != null)
+    if (!valid.length) return null
+    return valid.reduce((s, l) => s + (l[field] as number), 0) / valid.length
+  }
+
+  const recentProtein = calcAvg(recentLogs, 'protein_grams')
+  const prevProtein = calcAvg(prevWeekLogs, 'protein_grams')
+  const avgProteinTrend =
+    recentProtein == null || prevProtein == null
+      ? 'stable'
+      : recentProtein > prevProtein + 5
+      ? 'improving'
+      : recentProtein < prevProtein - 5
+      ? 'declining'
+      : 'stable'
+
+  const recentEnergy = calcAvg(recentLogs, 'energy_level')
+  const prevEnergy = calcAvg(prevWeekLogs, 'energy_level')
+  const avgEnergyTrend =
+    recentEnergy == null || prevEnergy == null
+      ? 'stable'
+      : recentEnergy > prevEnergy + 0.3
+      ? 'improving'
+      : recentEnergy < prevEnergy - 0.3
+      ? 'declining'
+      : 'stable'
 
   const firstName = profile.name?.split(' ')[0]
 
@@ -140,6 +201,16 @@ export default async function DashboardPage() {
           >
             All Reports
           </Link>
+        </div>
+
+        {/* Plateau Card */}
+        <div className="mb-4">
+          <PlateauCard
+            isOnPlateau={isOnPlateau}
+            plateauDays={plateauDays}
+            avgProteinTrend={avgProteinTrend}
+            avgEnergyTrend={avgEnergyTrend}
+          />
         </div>
 
         {/* Protein Alert */}

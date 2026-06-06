@@ -22,7 +22,7 @@ export async function generateWeeklyInsight(
       const foodTagStr =
         log.food_tags?.length > 0 ? log.food_tags.join(", ") : "not logged";
       const injTimeStr = log.injection_time ?? "not logged";
-      return `Date: ${log.log_date} | Weight: ${log.weight_kg ?? "—"}kg | Protein: ${log.protein_grams ?? "—"}g | Water: ${log.water_oz ?? "—"}oz | Energy: ${log.energy_level ?? "—"}/5 | Side effects: ${log.side_effects || "none"} | Food types: ${foodTagStr} | Injection time: ${injTimeStr}`;
+      return `Date: ${log.log_date} | Weight: ${log.weight_kg ?? "—"}kg | Protein: ${log.protein_grams ?? "—"}g | Water: ${log.water_oz ?? "—"}oz | Energy: ${log.energy_level ?? "—"}/5 | Food noise: ${log.food_noise_level ?? "—"}/10 | Side effects: ${log.side_effects || "none"} | Food types: ${foodTagStr} | Injection time: ${injTimeStr}`;
     })
     .join("\n");
 
@@ -41,6 +41,34 @@ export async function generateWeeklyInsight(
   const proteinDeficit =
     avgProtein != null && avgProtein < proteinTarget * 0.5;
 
+  // Plateau detection: 14+ consecutive days with weight variance < 0.5kg
+  const weightLogs = [...logs]
+    .filter((l) => l.weight_kg != null)
+    .sort((a, b) => a.log_date.localeCompare(b.log_date));
+  let plateauInstruction = "";
+  if (weightLogs.length >= 14) {
+    const weights = weightLogs.map((l) => l.weight_kg as number);
+    const maxW = Math.max(...weights);
+    const minW = Math.min(...weights);
+    const firstDate = new Date(weightLogs[0].log_date);
+    const lastDate = new Date(weightLogs[weightLogs.length - 1].log_date);
+    const span = Math.round(
+      (lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    if (maxW - minW < 0.5 && span >= 14) {
+      plateauInstruction = `IMPORTANT PLATEAU CONTEXT: This user's weight has been stable (within ${(maxW - minW).toFixed(2)}kg) for ${span} days. Open Paragraph 1 with a plateau reframe BEFORE anything else — acknowledge the scale hasn't moved, explain body recomposition (fat loss can occur while retaining water and preserving lean mass), and point to a specific non-scale win from their actual data this week (protein intake, energy levels, fewer side effects, or logging consistency). Make this feel genuinely reassuring, not dismissive.`;
+    }
+  }
+
+  // Food noise context for Paragraph 2
+  const foodNoiseLogs = logs.filter((l) => l.food_noise_level != null);
+  let foodNoiseInstruction = "";
+  if (foodNoiseLogs.length >= 3) {
+    foodNoiseInstruction = `They have also logged food noise (psychological cravings/urges) on ${foodNoiseLogs.length} days this week. Analyse the pattern — identify the day of week or situation where food noise is highest and include one CBT-style micro-challenge for the coming week. Example format: "Your food noise peaks on [day/situation] — this is often [reason e.g. boredom or social eating]. This week, try [specific CBT micro-challenge, e.g. identifying the exact moment the urge starts and waiting 10 minutes before acting on it]."`;
+  } else if (foodNoiseLogs.length > 0) {
+    foodNoiseInstruction = `They have started logging food noise but only on ${foodNoiseLogs.length} day(s) — not enough data for a pattern yet. Briefly acknowledge this and encourage them to keep logging food noise so patterns can emerge next week.`;
+  }
+
   const prompt = `You are a compassionate GLP-1 companion coach. The user is on ${profile.medication ?? "a GLP-1 medication"} at ${profile.current_dose ?? "their current"} dose. They have been on treatment since ${profile.start_date ?? "recently"}.
 
 Here are their health logs for the past week:
@@ -51,9 +79,9 @@ ${proteinDeficit ? `\nCRITICAL: This user is averaging less than 50% of their pr
 
 Write a personalised weekly insight in plain prose — no bullet points, no markdown, no bold text, no headers. Write exactly 4 paragraphs:
 
-Paragraph 1 — Overall progress: Acknowledge what they logged this week. Be warm and specific. Reference actual numbers.
+Paragraph 1 — Overall progress: ${plateauInstruction ? plateauInstruction + " Then continue with your overall progress commentary." : "Acknowledge what they logged this week. Be warm and specific. Reference actual numbers."}
 
-Paragraph 2 — Side effect & GI patterns: Look for correlations between their side effects, food types (high-fat, fried, alcohol, raw veg), and injection timing. If you see a pattern (e.g. nausea consistently follows high-fat meals, or peaks 2 days post-injection), name it clearly and give one concrete, actionable adjustment. If injection time is logged and side effects are present, suggest timing changes. If no clear pattern yet, explain what to watch for and encourage them to keep logging food types.
+Paragraph 2 — Side effect & GI patterns + Food Noise Psychology: Look for correlations between their side effects, food types (high-fat, fried, alcohol, raw veg), and injection timing. If you see a pattern (e.g. nausea consistently follows high-fat meals, or peaks 2 days post-injection), name it clearly and give one concrete, actionable adjustment. If injection time is logged and side effects are present, suggest timing changes. If no clear pattern yet, explain what to watch for and encourage them to keep logging food types. ${foodNoiseInstruction}
 
 Paragraph 3 — Muscle loss & protein: ${proteinDeficit ? `This is urgent. They are averaging ${avgProtein}g against a target of ${proteinTarget}g — less than half what they need. Explain clearly that on GLP-1s, up to 50% of weight lost can be lean muscle mass when protein is this low. Name 3 specific high-protein, low-volume foods they can add today: Greek yogurt (17g per cup), cottage cheese (25g per cup), or a protein shake (25–30g). Be direct about the health risk without being alarmist.` : `Acknowledge their protein intake relative to their ${proteinTarget}g target. If they are hitting it, praise the habit specifically. If they are somewhat under, suggest one easy addition. Briefly remind them that GLP-1s suppress appetite so much that muscle loss is a silent risk — keeping protein up is the most important thing they can do alongside the medication.`}
 

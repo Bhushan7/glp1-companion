@@ -23,6 +23,7 @@ export interface HealthLog {
   protein_grams: number | null
   water_oz: number | null
   energy_level: number | null
+  food_noise_level: number | null
   notes: string | null
   created_at: string
 }

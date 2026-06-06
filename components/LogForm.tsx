@@ -4,6 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import EnergySelector from './EnergySelector'
 
+// ALTER TABLE public.health_logs ADD COLUMN IF NOT EXISTS food_noise_level integer;
+
+function getFoodNoiseDescriptor(value: number): string {
+  if (value <= 3) return 'Quiet — medication working well'
+  if (value <= 6) return 'Moderate — some cravings present'
+  return 'Loud — strong urges or intrusive thoughts'
+}
+
 const SIDE_EFFECT_OPTIONS = [
   'Nausea', 'Fatigue', 'Headache', 'Constipation', 'Diarrhea',
   'Vomiting', 'Stomach pain', 'Loss of appetite',
@@ -23,6 +31,7 @@ export default function LogForm() {
     protein_grams: '',
     water_oz: '',
     energy_level: null as number | null,
+    food_noise_level: null as number | null,
     notes: '',
   })
   const [loading, setLoading] = useState(false)
@@ -55,6 +64,7 @@ export default function LogForm() {
       protein_grams: form.protein_grams ? parseInt(form.protein_grams) : null,
       water_oz: form.water_oz ? parseInt(form.water_oz) : null,
       energy_level: form.energy_level,
+      food_noise_level: form.food_noise_level,
       notes: form.notes || null,
     }
 
@@ -190,6 +200,31 @@ export default function LogForm() {
               value={form.energy_level}
               onChange={(v) => set('energy_level', v)}
             />
+          </div>
+
+          {/* Food Noise */}
+          <div>
+            <label className={labelClass}>How loud was your food noise today?</label>
+            <p className="text-xs text-gray-500 mb-3">Intrusive thoughts about food, cravings, urge to snack</p>
+            <div className="flex items-center gap-4">
+              <input
+                type="range"
+                min={1}
+                max={10}
+                inputMode="numeric"
+                value={form.food_noise_level ?? 5}
+                onChange={(e) => set('food_noise_level', parseInt(e.target.value))}
+                className="flex-1 accent-[#1D9E75]"
+              />
+              <span className="text-3xl font-bold text-[#1D9E75] w-8 text-center tabular-nums">
+                {form.food_noise_level ?? '—'}
+              </span>
+            </div>
+            <p className="text-xs text-gray-500 mt-2">
+              {form.food_noise_level != null
+                ? getFoodNoiseDescriptor(form.food_noise_level)
+                : 'Slide to rate'}
+            </p>
           </div>
 
           {/* Side effects — tap chips instead of textarea */}
