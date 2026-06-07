@@ -1,142 +1,84 @@
-import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+// app/page.tsx
 import Link from 'next/link'
-import { createClient } from '@/lib/supabase/server'
 import InsightCarousel from '@/components/InsightCarousel'
 
-export const metadata: Metadata = {
-  title: 'GLP Coach — The AI coach for your GLP-1 journey',
-  description:
-    'Every other app tracks your shots. GLP Coach tells you what to do about them — protein and muscle coaching, side-effect patterns, plateau reframes, and a personalised weekly AI insight.',
-}
-
-export default async function LandingPage() {
-  const supabase = createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (user) redirect('/dashboard')
-
+export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* ─── NAV ──────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-lg font-bold text-[#1D9E75] tracking-tight">GLP Coach</span>
-          <div className="flex items-center gap-5">
-            <a href="#pricing" className="hidden sm:inline text-sm font-medium text-gray-600 hover:text-[#1D9E75] transition-colors">
-              Pricing
-            </a>
-            <Link
-              href="/login"
-              className="text-sm font-semibold text-white bg-[#1D9E75] px-4 py-2 rounded-lg hover:bg-[#178a64] transition-colors"
-            >
-              Start free
+    <div className="min-h-screen bg-white font-sans">
+
+      {/* NAV */}
+      <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl">🌿</span>
+            <span className="font-bold text-gray-900 text-lg">GLP Coach</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors">
+              Sign in
+            </Link>
+            <Link href="/login" className="bg-[#1D9E75] text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-[#178a64] transition-colors">
+              Get free access →
             </Link>
           </div>
         </div>
-      </header>
+      </nav>
 
-      {/* ─── HERO ─────────────────────────────────────────────── */}
-      <section className="relative bg-gradient-to-b from-[#edfbf4] via-[#f5fdf9] to-white pt-20 pb-28 px-6 overflow-hidden">
-        {/* Decorative blurred circles */}
-        <div
-          aria-hidden
-          className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-30"
-          style={{ background: 'radial-gradient(circle, #1D9E75 0%, transparent 70%)' }}
-        />
-        <div
-          aria-hidden
-          className="absolute bottom-0 -left-16 w-72 h-72 rounded-full opacity-20"
-          style={{ background: 'radial-gradient(circle, #1D9E75 0%, transparent 70%)' }}
-        />
-
-        <div className="relative max-w-4xl mx-auto text-center">
-          {/* Pill badge */}
-          <div className="inline-flex items-center gap-2 bg-[#E3F5EE] text-[#1D9E75] text-sm font-semibold px-4 py-1.5 rounded-full mb-8">
-            <span className="w-2 h-2 rounded-full bg-[#1D9E75] animate-pulse" />
-            For Ozempic · Wegovy · Mounjaro · Zepbound
+      {/* HERO */}
+      <section className="pt-20 pb-16 px-6 text-center bg-gradient-to-b from-[#f0fdf8] to-white">
+        <div className="max-w-3xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-full px-4 py-1.5 mb-6">
+            <span className="text-sm">☕</span>
+            <span className="text-xs font-semibold text-amber-800">Free access during early launch — no credit card needed</span>
           </div>
-
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-[1.05] tracking-tight mb-6">
-            Every app tracks your shots.{' '}
-            <br className="hidden sm:block" />
-            <span className="text-[#1D9E75]">This one tells you what to do about them.</span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+            Your GLP-1 journey,{' '}
+            <span className="text-[#1D9E75]">finally understood</span>
           </h1>
-
-          <p className="text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed">
-            GLP Coach reads your doses, symptoms, protein, and weight — then uses AI to spot the
-            patterns that protect your muscle, ease side effects, and keep you from quitting.
+          <p className="text-lg sm:text-xl text-gray-500 leading-relaxed mb-10 max-w-2xl mx-auto">
+            Track your weight, energy, side effects, and protein intake. Get weekly AI insights
+            that explain what's actually happening — and what to do next.
           </p>
-
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 bg-[#1D9E75] text-white text-base font-bold px-9 py-4 rounded-xl hover:bg-[#178a64] transition-colors shadow-xl shadow-[#1D9E75]/25"
-          >
-            Start free
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </Link>
-
-          <p className="mt-4 text-sm text-gray-400">Free to start · No credit card required · Your first AI insight is on us</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/login" className="bg-[#1D9E75] text-white font-bold px-8 py-4 rounded-2xl text-base hover:bg-[#178a64] transition-colors shadow-lg shadow-[#1D9E75]/20">
+              Start tracking for free →
+            </Link>
+            <a href="#how-it-works" className="text-gray-600 font-medium px-8 py-4 rounded-2xl border border-gray-200 hover:border-gray-300 transition-colors text-base">
+              See how it works
+            </a>
+          </div>
+          <p className="mt-4 text-xs text-gray-400">Free during early launch · No credit card · Sign in with Google</p>
         </div>
       </section>
 
-      {/* ─── SOCIAL PROOF ─────────────────────────────────────── */}
-      <section className="bg-[#1D9E75] py-5 px-6">
-        <p className="text-center text-white font-medium text-sm md:text-base">
-          Built for the{' '}
-          <strong className="underline underline-offset-2 decoration-white/40">
-            millions of people
-          </strong>{' '}
-          on GLP-1 medications for weight loss
-        </p>
-      </section>
-
-      {/* ─── FEATURES ─────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-6xl mx-auto">
+      {/* FEATURES */}
+      <section id="how-it-works" className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              The coaching layer no tracker has
-            </h2>
-            <p className="text-lg text-gray-500 max-w-xl mx-auto">
-              Most apps show you charts. GLP Coach interprets them — like a coach who actually reads your data.
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Built for how GLP-1s actually work</h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+              Not just a weight tracker. A companion that understands the full picture — muscle, side effects, food noise, and the psychology of the journey.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Feature 1 */}
+          <div className="grid md:grid-cols-3 gap-6">
             <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
               <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
                 <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <rect x="3" y="12" width="4" height="8" rx="1" strokeLinejoin="round" />
-                  <rect x="10" y="8" width="4" height="12" rx="1" strokeLinejoin="round" />
-                  <rect x="17" y="4" width="4" height="16" rx="1" strokeLinejoin="round" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Muscle &amp; protein coaching</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">
-                Up to half the weight you lose on a GLP-1 can be muscle. We track your protein against your target and warn you before it&apos;s a problem.
-              </p>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Daily health logging</h3>
+              <p className="text-gray-500 leading-relaxed text-sm">Weight, dose, side effects, protein, energy, food noise — all in one 60-second daily log. Designed for real life, not a lab.</p>
             </div>
-
-            {/* Feature 2 */}
             <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
               <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
                 <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 12h4l3 8 4-16 3 8h4" />
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Side-effect &amp; plateau patterns</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">
-                We connect your injection timing and food to your nausea and fatigue — and reframe plateaus so you don&apos;t quit when the scale stalls.
-              </p>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Muscle & protein alerts</h3>
+              <p className="text-gray-500 leading-relaxed text-sm">GLP-1s can cause muscle loss if protein is too low. We track your intake and warn you before it becomes a problem — something no other app does.</p>
             </div>
-
-            {/* Feature 3 */}
             <div className="group bg-white border border-gray-100 rounded-2xl p-8 shadow-sm hover:shadow-lg hover:border-[#1D9E75]/20 transition-all">
               <div className="w-12 h-12 bg-[#E3F5EE] rounded-xl flex items-center justify-center mb-6 group-hover:bg-[#1D9E75] transition-colors">
                 <svg className="w-6 h-6 text-[#1D9E75] group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
@@ -146,188 +88,65 @@ export default async function LandingPage() {
                   <line x1="8" y1="17" x2="13" y2="17" strokeLinecap="round" />
                 </svg>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 mb-3">Personalised weekly AI insight</h3>
-              <p className="text-gray-500 leading-relaxed text-sm">
-                Every week, a plain-English report on what worked, what to fix, and the one change worth making next — built from your own data.
-              </p>
+              <h3 className="text-lg font-bold text-gray-900 mb-3">Weekly AI insight</h3>
+              <p className="text-gray-500 leading-relaxed text-sm">Every week, a plain-English report on what worked, what to fix, and the one change worth making next — built from your own data.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ─── INSIGHT CAROUSEL ─────────────────────────────────── */}
+      {/* INSIGHT CAROUSEL */}
       <section className="py-16 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <InsightCarousel />
         </div>
       </section>
 
-      {/* ─── PRICING ──────────────────────────────────────────── */}
-      <section id="pricing" className="py-24 px-6 bg-gray-50">
+      {/* WHY FREE */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-3xl mx-auto text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 bg-amber-100 rounded-2xl mb-6">
+            <span className="text-2xl">🌱</span>
+          </div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Why is it free right now?</h2>
+          <p className="text-lg text-gray-500 leading-relaxed mb-8">
+            GLP Coach is in early launch. Before we charge anyone, we want real people on real medications to use it, break it, and tell us what's missing. Your experience shapes the product. In return, you get full access — for free during this period.
+          </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-left space-y-3">
+            {['Full AI-powered weekly insights — no limit', 'Muscle & protein loss alerts', 'Side effect & GI pattern detection', 'Complete log history', 'Journey progress summary'].map((item) => (
+              <div key={item} className="flex items-center gap-3">
+                <span className="text-[#1D9E75] font-bold text-lg">✓</span>
+                <span className="text-sm text-gray-700 font-medium">{item}</span>
+              </div>
+            ))}
+          </div>
+          <div className="mt-8">
+            <Link href="/login" className="inline-block bg-[#1D9E75] text-white font-bold px-8 py-4 rounded-2xl hover:bg-[#178a64] transition-colors shadow-lg shadow-[#1D9E75]/20">
+              Get free access →
+            </Link>
+            <p className="mt-3 text-xs text-gray-400">No credit card · Sign in with Google</p>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="bg-gray-900 py-12 px-6 text-center">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Simple, transparent pricing
-            </h2>
-            <p className="text-lg text-gray-500">Start free. Upgrade when the insights prove their worth.</p>
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="text-xl">🌿</span>
+            <span className="font-bold text-white text-lg">GLP Coach</span>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-            {/* Free */}
-            <div className="bg-white rounded-2xl border border-gray-200 p-8 flex flex-col">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Free</p>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-5xl font-extrabold text-gray-900">$0</span>
-                <span className="text-gray-400 text-sm">forever</span>
-              </div>
-              <p className="text-sm text-gray-400 mb-8">Everything you need to start</p>
-
-              <ul className="space-y-3 mb-10 flex-1">
-                <PricingItem included>Daily health logging</PricingItem>
-                <PricingItem included>Injection &amp; dose reminders</PricingItem>
-                <PricingItem included>14-day log history</PricingItem>
-                <PricingItem included>1 AI insight to try</PricingItem>
-                <PricingItem>Unlimited weekly AI insights</PricingItem>
-              </ul>
-
-              <Link
-                href="/login"
-                className="block text-center border-2 border-gray-200 text-gray-600 font-semibold py-3.5 rounded-xl hover:border-[#1D9E75] hover:text-[#1D9E75] transition-colors"
-              >
-                Start free
-              </Link>
-            </div>
-
-            {/* Pro */}
-            <div className="bg-[#1D9E75] rounded-2xl p-8 flex flex-col relative overflow-hidden">
-              <div className="absolute top-5 right-5 bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full tracking-wide">
-                BEST VALUE
-              </div>
-              <p className="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Pro</p>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-5xl font-extrabold text-white">$59.99</span>
-                <span className="text-white/60 text-sm">/year</span>
-              </div>
-              <p className="text-sm text-white/70 mb-8">Just $5/mo, billed annually · or $8.99/mo</p>
-
-              <ul className="space-y-3 mb-10 flex-1">
-                <PricingItemWhite>Unlimited weekly AI insights</PricingItemWhite>
-                <PricingItemWhite>Muscle &amp; protein deficit coaching</PricingItemWhite>
-                <PricingItemWhite>Side-effect &amp; plateau analysis</PricingItemWhite>
-                <PricingItemWhite>Food-noise &amp; psychology tracking</PricingItemWhite>
-                <PricingItemWhite>Unlimited history &amp; doctor PDF</PricingItemWhite>
-              </ul>
-
-              <Link
-                href="/login"
-                className="block text-center bg-white text-[#1D9E75] font-bold py-3.5 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                Start 7-day free trial
-              </Link>
-              <p className="mt-3 text-center text-xs text-white/60">7-day free trial · cancel anytime</p>
-            </div>
-          </div>
-
-          {/* Maintenance add-on note */}
-          <p className="mt-8 text-center text-sm text-gray-500">
-            Approaching your goal weight?{' '}
-            <span className="font-semibold text-gray-700">Maintenance &amp; off-ramp planning</span>{' '}
-            is available as an add-on for Pro members.
-          </p>
-        </div>
-      </section>
-
-      {/* ─── FINAL CTA ────────────────────────────────────────── */}
-      <section
-        className="py-24 px-6"
-        style={{ background: 'linear-gradient(135deg, #0a5e42 0%, #1D9E75 60%, #24b585 100%)' }}
-      >
-        <div className="max-w-xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-white mb-4">
-            Understand your journey this week
-          </h2>
-          <p className="text-lg text-white/75 mb-10 leading-relaxed">
-            Sign up free, log a few days, and get a personalised AI insight that actually tells you
-            what to do next. No credit card required.
-          </p>
-          <Link
-            href="/login"
-            className="inline-flex items-center gap-2 bg-white text-[#1D9E75] text-base font-bold px-9 py-4 rounded-xl hover:bg-gray-50 transition-colors shadow-xl"
-          >
-            Start free
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* ─── FOOTER ───────────────────────────────────────────── */}
-      <footer className="py-10 px-6 bg-white border-t border-gray-100">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm font-bold text-[#1D9E75] mb-3">GLP Coach</p>
-          <p className="text-xs text-gray-400 max-w-md mx-auto leading-relaxed">
-            GLP Coach is a personal wellness journal, not a medical device. Always follow
-            your doctor&apos;s guidance.
+          <p className="text-xs text-gray-500 max-w-lg mx-auto leading-relaxed">
+            GLP Coach is a wellness journal and tracking tool. It is not a medical device and does not provide medical advice. Always follow your doctor's guidance.
           </p>
           <div className="mt-4 flex items-center justify-center gap-4">
-            <Link href="/privacy-policy" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms-of-service" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
-              Terms of Service
-            </Link>
-            <Link href="/refund-policy" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">
-              Refund Policy
-            </Link>
+            <Link href="/privacy-policy" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">Privacy Policy</Link>
+            <Link href="/terms-of-service" className="text-xs text-gray-400 hover:text-[#1D9E75] transition-colors">Terms of Service</Link>
           </div>
-          <p className="mt-4 text-xs text-gray-300">© 2026 GLP Coach. All rights reserved.</p>
+          <p className="mt-4 text-xs text-gray-600">© 2026 GLP Coach. All rights reserved.</p>
         </div>
       </footer>
+
     </div>
-  )
-}
-
-// ─── Small pricing helpers ───────────────────────────────────────────────────
-
-function CheckGreen() {
-  return (
-    <svg className="w-5 h-5 text-[#1D9E75] shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-    </svg>
-  )
-}
-
-function CrossGray() {
-  return (
-    <svg className="w-5 h-5 text-gray-300 shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-    </svg>
-  )
-}
-
-function CheckWhite() {
-  return (
-    <svg className="w-5 h-5 text-white shrink-0" viewBox="0 0 20 20" fill="currentColor">
-      <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
-    </svg>
-  )
-}
-
-function PricingItem({ children, included = false }: { children: React.ReactNode; included?: boolean }) {
-  return (
-    <li className={`flex items-center gap-3 text-sm ${included ? 'text-gray-700' : 'text-gray-300'}`}>
-      {included ? <CheckGreen /> : <CrossGray />}
-      {children}
-    </li>
-  )
-}
-
-function PricingItemWhite({ children }: { children: React.ReactNode }) {
-  return (
-    <li className="flex items-center gap-3 text-sm text-white">
-      <CheckWhite />
-      {children}
-    </li>
   )
 }
