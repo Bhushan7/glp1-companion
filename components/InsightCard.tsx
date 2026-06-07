@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import UpgradePaywall from './UpgradePaywall'
+import { IS_FREE_PERIOD } from '@/lib/config'
 
 interface InsightCardProps {
   insight: string | null
@@ -26,7 +27,7 @@ export default function InsightCard({
   const journeyText = journeyInsight || (parts[1]?.trim() || '')
 
   // ── Upgrade required: show paywall over dimmed insight ──────────────────
-  if (upgradeRequired && insight) {
+  if (upgradeRequired && insight && !IS_FREE_PERIOD) {
     return (
       <>
         {/* Dimmed insight in background */}

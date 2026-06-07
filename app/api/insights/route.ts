@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient, createServiceRoleClient } from '@/lib/supabase/server'
 import { generateWeeklyInsight } from '@/lib/claude'
 import type { HealthLog } from '@/types/database'
+import { IS_FREE_PERIOD } from '@/lib/config'
 
 export async function POST(request: Request) {
   const supabase = createClient()
@@ -103,29 +104,23 @@ export async function POST(request: Request) {
 
   const fullInsight = `${weeklyInsight}\n\n---OVERALL JOURNEY---\n\n${journeyInsight}`
 
-  // ── Check if free user on 2nd+ insight (UPGRADE PAYWALL TRIGGER) ──────────
-  const isFreeUser =
-    !profile.subscription_status || profile.subscription_status === 'free'
-
-  if (isFreeUser) {
-    // Count total insights this user has generated
-    const { count: totalInsights } = await admin
-      .from('weekly_insights')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', user.id)
-
-    const isSecondInsightOrMore = (totalInsights || 0) >= 1
-
-    if (isSecondInsightOrMore) {
-      // Free user has already used their 1 free insight
-      // Return the insight as a preview but flag for upgrade paywall
-      return NextResponse.json({
-        error: 'upgrade_required',
-        insight: weeklyInsight,
-        journeyInsight: journeyInsight,
-        message:
-          'Upgrade to Pro to unlock unlimited weekly insights, journey summaries, and full health history.',
-      })
+  // ── Upgrade paywall check (SKIP during IS_FREE_PERIOD) ───────────────────
+  if (!IS_FREE_PERIOD) {
+    const isFreeUser = !profile.subscription_status || profile.subscription_status === 'free'
+    if (isFreeUser) {
+      const { count: totalInsights } = await admin
+        .from('weekly_insights')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+      const isSecondInsightOrMore = (totalInsights || 0) >= 1
+      if (isSecondInsightOrMore) {
+        return NextResponse.json({
+          error: 'upgrade_required',
+          insight: weeklyInsight,
+          journeyInsight: journeyInsight,
+          message: 'Upgrade to Pro to unlock unlimited weekly insights.',
+        })
+      }
     }
   }
 
