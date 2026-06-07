@@ -8,6 +8,8 @@ import GenerateInsightButton from '@/components/GenerateInsightButton'
 import ProteinAlertCard from '@/components/ProteinAlertCard'
 import PlateauCard from '@/components/PlateauCard'
 import OffRampScoreCard from '@/components/OffRampScoreCard'
+import BuyMeCoffeeBanner from '@/components/BuyMeCoffeeBanner'
+import FeedbackWidget from '@/components/FeedbackWidget'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
 function calculateStreak(logs: HealthLog[]): number {
@@ -167,6 +169,11 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-500 mt-0.5">Here&apos;s your progress this week.</p>
         </div>
 
+        {/* Buy Me a Coffee Banner */}
+        <div className="mb-6">
+          <BuyMeCoffeeBanner />
+        </div>
+
         {/* Stats — 2 cols on mobile, 4 on desktop */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
           <StatCard label="Streak" value={`${streak}d`} />
@@ -294,6 +301,8 @@ export default async function DashboardPage() {
 
       {/* Spacer so content isn't hidden behind bottom nav on mobile */}
       <div className="h-20 md:hidden" />
+
+      <FeedbackWidget />
     </div>
   )
 }
