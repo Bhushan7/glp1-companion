@@ -1,5 +1,4 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr'
-import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export async function GET(request: Request) {
@@ -10,35 +9,14 @@ export async function GET(request: Request) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
   if (code) {
-    const cookieStore = cookies()
-
-    // Build the response first so we can write cookies onto it
-    const response = NextResponse.redirect(`${appUrl}${next}`)
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll()
-          },
-          setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-            cookiesToSet.forEach(({ name, value, options }) => {
-              // Write cookies to BOTH the store and the response
-              cookieStore.set(name, value, options)
-              response.cookies.set(name, value, options)
-            })
-          },
-        },
-      }
-    )
-
+    const supabase = createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (!error) {
-      return response
+      return NextResponse.redirect(`${appUrl}${next}`)
     }
+
+    console.error('exchangeCodeForSession error:', error)
   }
 
   return NextResponse.redirect(`${appUrl}/login?error=auth_failed`)
