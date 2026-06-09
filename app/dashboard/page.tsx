@@ -8,7 +8,6 @@ import GenerateInsightButton from '@/components/GenerateInsightButton'
 import ProteinAlertCard from '@/components/ProteinAlertCard'
 import PlateauCard from '@/components/PlateauCard'
 import OffRampScoreCard from '@/components/OffRampScoreCard'
-import BuyMeCoffeeBanner from '@/components/BuyMeCoffeeBanner'
 import FeedbackWidget from '@/components/FeedbackWidget'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
