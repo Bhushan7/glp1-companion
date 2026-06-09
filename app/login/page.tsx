@@ -57,7 +57,7 @@ export default function LoginPage() {
 
         {/* Logo */}
         <div className="text-center mb-8">
-          <span className="text-2xl font-bold text-[#1D9E75]">GLP-1 Companion</span>
+          <span className="text-2xl font-bold text-[#1D9E75]">GLP Coach</span>
           <p className="text-sm text-gray-500 mt-1">Track your journey, understand your progress.</p>
         </div>
 
@@ -126,7 +126,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
-          GLP-1 Companion is a wellness journal, not a medical device.
+          GLP Coach is a wellness journal, not a medical device.
         </p>
       </div>
     </main>

@@ -168,6 +168,11 @@ export default async function DashboardPage() {
           <p className="text-sm text-gray-500 mt-0.5">Here&apos;s your progress this week.</p>
         </div>
 
+        {/* Buy Me a Coffee Banner */}
+        <div className="mb-6">
+          <BuyMeCoffeeBanner />
+        </div>
+
         {/* Stats — 2 cols on mobile, 4 on desktop */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
           <StatCard label="Streak" value={`${streak}d`} />
