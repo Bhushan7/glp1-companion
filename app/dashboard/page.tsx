@@ -8,7 +8,6 @@ import GenerateInsightButton from '@/components/GenerateInsightButton'
 import ProteinAlertCard from '@/components/ProteinAlertCard'
 import PlateauCard from '@/components/PlateauCard'
 import OffRampScoreCard from '@/components/OffRampScoreCard'
-import BuyMeCoffeeBanner from '@/components/BuyMeCoffeeBanner'
 import FeedbackWidget from '@/components/FeedbackWidget'
 import type { HealthLog, WeeklyInsight } from '@/types/database'
 
@@ -167,11 +166,6 @@ export default async function DashboardPage() {
             Welcome back, {firstName} 👋
           </h1>
           <p className="text-sm text-gray-500 mt-0.5">Here&apos;s your progress this week.</p>
-        </div>
-
-        {/* Buy Me a Coffee Banner */}
-        <div className="mb-6">
-          <BuyMeCoffeeBanner />
         </div>
 
         {/* Stats — 2 cols on mobile, 4 on desktop */}
