@@ -6,10 +6,7 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
   const [googleLoading, setGoogleLoading] = useState(false)
-  const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   async function handleGoogleSignIn() {
@@ -26,28 +23,6 @@ export default function LoginPage() {
     if (error) {
       setError(error.message)
       setGoogleLoading(false)
-    }
-    // On success, browser redirects to Google — no need to setLoading(false)
-  }
-
-  async function handleMagicLink(e: React.FormEvent) {
-    e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    const { error } = await createClient().auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback`,
-      },
-    })
-
-    setLoading(false)
-
-    if (error) {
-      setError(error.message)
-    } else {
-      setSent(true)
     }
   }
 
@@ -70,7 +45,6 @@ export default function LoginPage() {
             </div>
           )}
 
-          {/* Google OAuth — primary */}
           <button
             onClick={handleGoogleSignIn}
             disabled={googleLoading}
@@ -91,38 +65,6 @@ export default function LoginPage() {
             )}
             {googleLoading ? 'Redirecting…' : 'Continue with Google'}
           </button>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-gray-400 font-medium">or</span>
-            <div className="flex-1 h-px bg-gray-100" />
-          </div>
-
-          {/* Magic link fallback */}
-          {sent ? (
-            <div className="rounded-xl bg-[#E3F5EE] px-4 py-3 text-sm text-[#1D9E75] font-medium">
-              Check your email — a sign-in link is on its way to <strong>{email}</strong>.
-            </div>
-          ) : (
-            <form onSubmit={handleMagicLink} className="space-y-3">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="your@email.com"
-                required
-                className="w-full rounded-xl border border-gray-200 px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#1D9E75] focus:border-transparent"
-              />
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full rounded-xl bg-gray-900 text-white py-3 text-sm font-semibold hover:bg-gray-800 transition-colors disabled:opacity-60"
-              >
-                {loading ? 'Sending…' : 'Send magic link'}
-              </button>
-            </form>
-          )}
         </div>
 
         <p className="text-center text-xs text-gray-400 mt-6">
